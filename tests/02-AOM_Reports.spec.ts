@@ -138,23 +138,7 @@ test('@Outamate DS: Reports ', async ({ page, baseURL }) => {
     expect(stats.size).toBeGreaterThan(0);
 
 
-    // //console.log('File is not empty/corrupted');
-    //  if (page.url().includes('https://dev-outamateds.outamationlabs.com/app/internal/assignments/reports/order-export')) {
-
-    //     addResult({
-    //         srNo: `${reportBase}.1`,
-    //         module: 'Order Export Report',
-    //         status: 'Pass',
-    //         URL: `<a href="${base}/app/internal/assignments/reports/order-export">Order Export Report</a>`
-    //     });
-    // } else {
-    //     addResult({
-    //         srNo: `${reportBase}.1`,
-    //         module: 'Order Export Report',
-    //         status: 'Fail',
-    //         URL: `<a href="${base}/app/internal/assignments/reports/order-export">Order Export Report</a>`
-    //     });
-    // }
+    
 
     //Reports 
     await page.locator('mat-expansion-panel').filter({ hasText: 'Reports' }).click();
