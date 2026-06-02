@@ -1,0 +1,211 @@
+{
+  "cookies": [
+    {
+      "name": "esctx-sYuCEWKE5Lc",
+      "value": "AQABCQEAAAAdDD7nC9b5Q7JPd_okEQRFRXZvU3RzQXJ0aWZhY3RzDQAAAAAAwSaSvGOEExthA9Mo1PwxdFCz69oU7kUhtAhr22ZJkF46fcAEmuDjh17Kta9KnAIdT4wz_tpmw1ZWtcPBHS7y2Y4HkpiwTmz6n0ShRpsijG85GK0WRJC0s9mZlxtm3w2AWqQpFfSzTWIomF26fVI7XiAA",
+      "domain": ".ociamdev.ciamlogin.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "x-ms-gateway-slice",
+      "value": "estsfd",
+      "domain": "ociamdev.ciamlogin.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "stsservicecookie",
+      "value": "estsfd",
+      "domain": "ociamdev.ciamlogin.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "AADSSO",
+      "value": "NA|NoExtension",
+      "domain": ".ociamdev.ciamlogin.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "SSOCOOKIEPULLED",
+      "value": "1",
+      "domain": "ociamdev.ciamlogin.com",
+      "path": "/",
+      "expires": 1780384134,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "esctx-3BshFbhpgW0",
+      "value": "AQABCQEAAAAdDD7nC9b5Q7JPd_okEQRFRXZvU3RzQXJ0aWZhY3RzDQAAAAAAs8W0bZonW2ubhTc6xWv1T4x4bNMMwqoPhwkg4ciu39bjQLCQuCFAAOFuIGauR7MFp2JMEwxHID31nCuLaMLZETDKToe9m9klUo6q4jtaB6DAnTx_zxw_N0OSM_FtMyiqjyVcFW-SWYtf59LSZnSPaiAA",
+      "domain": ".ociamdev.ciamlogin.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "ESTSAUTHLIGHT",
+      "value": "+005be38a-2e4c-856c-8e26-798684484dde",
+      "domain": "ociamdev.ciamlogin.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "esctx",
+      "value": "PAQABBwEAAAAdDD7nC9b5Q7JPd_okEQRFRXZvU3RzQXJ0aWZhY3RzDQAAAAAAdzNnZrYBMUGIJSt6mjXbxukDNTx4XUflOkXtX0DgFphGKHPIQlkY7uShXvZvVYtQe3i5kuNKDm9OliQDb7V5aX8P-g0wVE4J4IvFc7SJ_4zAE688ktvYIrdTqJkTm_B-JScc1ZFgM_8_AezodI2ZEEyxe6-XE4yU2P_uuc_WeEogAA",
+      "domain": ".ociamdev.ciamlogin.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "esctx-FYAvF7opIS4",
+      "value": "AQABCQEAAAAdDD7nC9b5Q7JPd_okEQRFRXZvU3RzQXJ0aWZhY3RzDQAAAAAAZUXaOiCu0oUl5J2yOC-xUPqaOY4dqqU-ITxtkv-ygeSls-rV339uITAkXVOPwqK05xLbH9J7mrnavVJWuYvKCQSTQttfTMNL4F6Dxy8cL-05SrRci0Jp4_5Vvj2NPm1_EbEjfysu4uRnmb79UfMP4iAA",
+      "domain": ".ociamdev.ciamlogin.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "uaid",
+      "value": "39828555e7a5452080558ec3e2309f5c",
+      "domain": ".login.live.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "MSPRequ",
+      "value": "id=N&lt=1780384097&co=0",
+      "domain": ".login.live.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "ESTSAUTHPERSISTENT",
+      "value": "1.Ac8Aa-K5mUf9NEiXw6iRNMR8Tq0SkDCA-VtAiXvpioZRKKoAAADPAA.BQABFwQAAAADAOz_BQD0_0V2b1N0c0FydGlmYWN0cxAAAAAAACjx6Dn-hxO3QWA2VySikcJ_8vjamZSxnA1-LSwDQueQ3YH7vUy_-AZXKtE3xF6_tLUNUNtnEoO4h6KI8eAqNKKEu5vCZyIjF0escuY7a59ZP7xXKH5xU4JHkNMlJkc2t2pOuB5e0jp_cCoD6_XJyRj9gwo2ehasryLHQ5gXeA3JMME0IvnWN5PI0vNe7TogkzJy8MqDDOAa8eJdftI9z51qo3xgilxdY2B2ZA2ANALm-M3z1ZROgzQbnFd2DhM2degjegbeVgP5SZ_Nt7VOoSkXZWTFPzwXfQ9WQCwrBdLJySqf_9lXdUSfwgNEYcsZ3GRUe9cnWulSA3La0OXYoniDEIf4izpK0E66EOFmafdFVgvH8e9j0yo7oqd21WwKUijwS8tAKMq6Apmz6xnO79FaA96PCwZoqtbiLXTfMXwOi1Hq-cGx3v3uU8VeIIJhFkauDKs1vMP3aHoEi6LimFGvdXxtp1mYQUfgzukuVA32iuRTv4qKdC1MwFqnqf6u49fj4wK-FWVpKznT9wDEhJDQZFdWlySk2RHOF76N-uXSNKCFzqfQcVStPgzegLM7X6BxoWXmFD2n_luh0-83HnRIRmnQnGxWxtja3qlORZro8H5nFQI3AtAgMHYQdizQJ_fCqxtJiIRSw0BqjiLwgxhpbvLQTPJ0c6ufNv2mC2NYihPpKKPfu2JfnCRx738kzI1gp5sMo2uJh2p_xJOlxQJiSvCShF_PBb2jZ1dqMtruJTjrOvJPhTFupznq7cC3hFRG4N8SRyqGBs2R4tVO7_6rrJ5nXK47Lz9_bE-y5m0-kajz9azKt1wxXERwBAvpzbEWJD5u_pGnhxS5dQjKKSTodUH2QjsmEnKUB2THTHHFwj87J_uPV2IF3RMjbAoGW94Fid8adpoZQBepJQM479f_I2h9f7ag0fWPnq2cOS0CBIwTRFOehdgXPCCfrqpKQ3tKoaBN6N4BD2u9DvNmsDUOK4wK4PeADTWsYdAfOZm8Cpt00L-drfliiD-lRc0pkm2znf9RfSJ7MXXgMaGzxz-Yn3mwGlI63N9j4wFWvCX_6aw6qZyy4xLLF33e-8Beo0bXtyIHMSRjYKE8ZtXZpCl_KEPC3NllCko2t0xIGcKk-6Nxyh9oiKlOBm2HBZNDc5DQ9-Qn92dDiEtcazH-KPcywomCAuwYmMcqtVUs-G0KsWyQbTouNUc8nZEG1fNcEv8oeB6MuNCDsFtGnrjXxmzL2gT2VLKOwssu3ZRzaI84ynaKjWwKvONhfRVJZLcqbsnQOSlj_AsIISmgsThLzA",
+      "domain": ".ociamdev.ciamlogin.com",
+      "path": "/",
+      "expires": 1788160089.609863,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "ESTSAUTH",
+      "value": "1.Ac8Aa-K5mUf9NEiXw6iRNMR8Tq0SkDCA-VtAiXvpioZRKKoAAADPAA.",
+      "domain": ".ociamdev.ciamlogin.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "buid",
+      "value": "1.Ac8Aa-K5mUf9NEiXw6iRNMR8Tq0SkDCA-VtAiXvpioZRKKoAAADPAA.AQABGgEAAAAdDD7nC9b5Q7JPd_okEQRFRXZvU3RzQXJ0aWZhY3RzAwAAAAAAs3mm3b4UE89i9wUhe3m31Ke0WZuFIK6NyZOZ3kh6aQX0gF6edgdbB1GRNK3p3EQDM_UXdCmyIhV1V_TomhkSeenLliRilYALKc8i9YGkmYttbeoh6bNQzTtzBCxvlY0F1WRAVBK0Od4QARqq4cBuhg-Lv4xUNRv29bNk_CW00zXoTxmA2lrvh1rG_CYCkFEq47J_ZvMQdEuTYfPCCEqswIqrT6oHixOZpnaQUNm_pVuFsmFzb4Lrl0ULTYF09rIEcOWm2_HD5sOrLWbVh3ugTiAA",
+      "domain": "ociamdev.ciamlogin.com",
+      "path": "/",
+      "expires": 1782976089.610578,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "SignInStateCookie",
+      "value": "CAgABFgIAAAAdDD7nC9b5Q7JPd_okEQRFAwDs_wUA9P9Fdm9TdHNBcnRpZmFjdHMGAAAAAACZoEtYerb85bmkbrvhw_13kN7cScaSlXkeYN6-EjNtS46g_GTozCF4jsLXWp0p1eNxMEVNmaP2LMfdPMNkyxhq79y52lDGd7X-LN5lpfpIzOTruUDy_jA5aMhDvqp2ZFZZDkXafQHQFRmOlolo1FIwuOq4KunF815erDfX8WqqMI7DNZ2g9sb4sx8RMef1QZj8DAEN6T1PVfGcK_BYU7q46z2G7F1M1LRbI9Gjis2IX5otTJGSeMTQ4YZz1li_wT1ODRp_pg",
+      "domain": ".ociamdev.ciamlogin.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "fpc",
+      "value": "ArKs_o1o1zlPgvGSXEk8dJXJG_cNAQAAAFd4sOEOAAAAL-DCyQEAAABeeLDhDgAAALUy08YBAAAAYniw4Q4AAAA",
+      "domain": "ociamdev.ciamlogin.com",
+      "path": "/",
+      "expires": 1782976089.610692,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "https://uat-outamateds.outamationlabs.com",
+      "localStorage": [
+        {
+          "name": "802f03aa-271f-47b3-aded-b015c73645d3.d0dd8c54-2968-4466-a8e7-9684352ae906-ociamdev.ciamlogin.com-idtoken-309012ad-f980-405b-897b-e98a865128aa-99b9e26b-fd47-4834-97c3-a89134c47c4e---",
+          "value": "{\"credentialType\":\"IdToken\",\"homeAccountId\":\"802f03aa-271f-47b3-aded-b015c73645d3.d0dd8c54-2968-4466-a8e7-9684352ae906\",\"environment\":\"ociamdev.ciamlogin.com\",\"clientId\":\"309012ad-f980-405b-897b-e98a865128aa\",\"secret\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Ims5eG1TdFE4VDlUNHNFOXBuQ25fLXU0eVVzcyJ9.eyJhdWQiOiIzMDkwMTJhZC1mOTgwLTQwNWItODk3Yi1lOThhODY1MTI4YWEiLCJpc3MiOiJodHRwczovLzk5YjllMjZiLWZkNDctNDgzNC05N2MzLWE4OTEzNGM0N2M0ZS5jaWFtbG9naW4uY29tLzk5YjllMjZiLWZkNDctNDgzNC05N2MzLWE4OTEzNGM0N2M0ZS92Mi4wIiwiaWF0IjoxNzgwMzgzODAzLCJuYmYiOjE3ODAzODM4MDMsImV4cCI6MTc4MDM4NzcwMywiYWlvIjoiQVdRQW0vOGNBQUFBcGxWYjVnaXJjZFdqUURtRDlzRUJhMlFCK245Y0MvODJoNzMrTXhNZXBXdHhiNUQ4WFNkSEJCNC9SZDAwVUZrcEUrb1p0Yy82anBxenFwczRWb3RoTFQwUzFINlBWZzRUK2RScXdya3lzWW5iWHZUMzJiU2JUcVV2bnRxMk1NbEciLCJlbWFpbCI6ImF1dG9tYXRpb25zY3JpcHRAb3V0YW1hdGlvbmxhYnMuY29tIiwiaWRwIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvZDBkZDhjNTQtMjk2OC00NDY2LWE4ZTctOTY4NDM1MmFlOTA2LyIsIm5hbWUiOiJBdXRvbWF0aW9uIFNjcmlwdCIsIm5vbmNlIjoiMDE5ZTg3MjgtZmUyNS03MjUxLTk2ZTktNTcxYzY0ZmRhNWZlIiwib2lkIjoiYzAzYWQ3YzgtMDEwNy00NDkxLTk4ZWQtMjU2ZDBmN2M4OTFjIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiYXV0b21hdGlvbnNjcmlwdEBvdXRhbWF0aW9ubGFicy5jb20iLCJyaCI6IjEuQWM4QWEtSzVtVWY5TkVpWHc2aVJOTVI4VHEwU2tEQ0EtVnRBaVh2cGlvWlJLS29BQUV2UEFBLiIsInNpZCI6IjAwNWJlMzhhLTJlNGMtODU2Yy04ZTI2LTc5ODY4NDQ4NGRkZSIsInN1YiI6IlJvWm5aU2pYelotc1pZWkJWVlN4ZVkzWWxFV1QxWFRTS2dVd1lrclFrSHciLCJ0aWQiOiI5OWI5ZTI2Yi1mZDQ3LTQ4MzQtOTdjMy1hODkxMzRjNDdjNGUiLCJ1dGkiOiJBT0FucTN2VGRFeTc3Y19kdVBRSEFBIiwidmVyIjoiMi4wIn0.dwPAH0nWaDpQZTt7HKoPns1ejoj4xGb2nn5X62bNB0-YlpHo7qkb-y9cNCpWMcQj9WPyryJtcc7h_dGe1hxBXaqBMWiVH242SYCMDBQEfZyEMLCfqN5YeiWpYQrVe_hMMFcZFuEw-mbgFLWb1kSBSTu5Wf0lA3T8kWyaa9ZhNqYDYYBl_L_1Vlx8lUZQK3iZvgEvtJPKQKwrpwseRVeXukaz_XqKnTivoQ-NFKZ85HLLpc4CLQVngEX3NhZupiBfpBOZX83SyumEorsD0MZpHhs0ZIQKKDIF-8AI8rl1NM-rAi1m3s-P6pDRFXy9fGvFykKz3iFpfzvnj43qFYW8zQ\",\"realm\":\"99b9e26b-fd47-4834-97c3-a89134c47c4e\",\"lastUpdatedAt\":\"1780384093283\"}"
+        },
+        {
+          "name": "msal.token.keys.309012ad-f980-405b-897b-e98a865128aa",
+          "value": "{\"idToken\":[\"802f03aa-271f-47b3-aded-b015c73645d3.d0dd8c54-2968-4466-a8e7-9684352ae906-ociamdev.ciamlogin.com-idtoken-309012ad-f980-405b-897b-e98a865128aa-99b9e26b-fd47-4834-97c3-a89134c47c4e---\"],\"accessToken\":[\"802f03aa-271f-47b3-aded-b015c73645d3.d0dd8c54-2968-4466-a8e7-9684352ae906-ociamdev.ciamlogin.com-accesstoken-309012ad-f980-405b-897b-e98a865128aa-99b9e26b-fd47-4834-97c3-a89134c47c4e-api://309012ad-f980-405b-897b-e98a865128aa/info.read--\"],\"refreshToken\":[\"802f03aa-271f-47b3-aded-b015c73645d3.d0dd8c54-2968-4466-a8e7-9684352ae906-ociamdev.ciamlogin.com-refreshtoken-309012ad-f980-405b-897b-e98a865128aa----\"]}"
+        },
+        {
+          "name": "msal.account.keys",
+          "value": "[\"802f03aa-271f-47b3-aded-b015c73645d3.d0dd8c54-2968-4466-a8e7-9684352ae906-ociamdev.ciamlogin.com-d0dd8c54-2968-4466-a8e7-9684352ae906\"]"
+        },
+        {
+          "name": "802f03aa-271f-47b3-aded-b015c73645d3.d0dd8c54-2968-4466-a8e7-9684352ae906-ociamdev.ciamlogin.com-refreshtoken-309012ad-f980-405b-897b-e98a865128aa----",
+          "value": "{\"credentialType\":\"RefreshToken\",\"homeAccountId\":\"802f03aa-271f-47b3-aded-b015c73645d3.d0dd8c54-2968-4466-a8e7-9684352ae906\",\"environment\":\"ociamdev.ciamlogin.com\",\"clientId\":\"309012ad-f980-405b-897b-e98a865128aa\",\"secret\":\"1.Ac8Aa-K5mUf9NEiXw6iRNMR8Tq0SkDCA-VtAiXvpioZRKKoAAEvPAA.BQABAwEAAAADAOz_BQD0_0V2b1N0c0FydGlmYWN0cwIAAAAAAOlAyHv6siVHpUt7nAyzbYzEEJOY1NmAHelZpmtqcmqydxHkvZOhQmgaicSzb_frBjhfV_C_pRzZtCXHROov2enmvdZp3vZjqX9K04Qumju1Nv7MSpfakIlqXE_LFteKzQX11n2d7XvIH5o1aGr2-jotorkNAy1CCp0SI4NCr9G-mMyLufPdyNT8ovhyyVtPyeAYygiog-abRL7Nvh7ZM6QLUXQi5fxDngSytFj6PCSHMekcSBsP4JDjtBPVRxjMtlSGb6tp_btINGaMoWLqDd5r5Fy9nomyGtwLgp0hJ3Ae7b8uXi4fkm86-APc-uJSjf4zxLSWtSev-FEXpXO5_NcigICysfcs-znEWEkJfC8xjtE5-PxRXAfpPyFgHOgkjZDvOkdGrMxiYTfbHHo9VUEBZEYNL4w-X-ZqQWA2MLZnl91gS9nplMf2bq40Pk_la38n3rOVNoUo_K8u67igqcShOV9ZWIAfv3NQ84f_KAgsolclrWqf8wskL2_p79GJP4aKzvFHHAJ_rzI2BAwOYHqTr1TF5ZIkcOrstZeXwY4E2DIqFzCD-GmOhxTtM79_XA7o6RxW1XLgc3Q8w6VsYoyOVIrmEfk_mD8kw0_TBAkmBjmwV1gJAtFhBARCKjklW4gOs40o1yQTU_LLnX8qTzA5e9tyniMk6vaESWuJXlSV0se-3OE-3kNeRB5PaD6nyJqB2zcLG82r-8J8bSYIh3fXhNHGq91EyHXJYp5wbvyACtLKppk3ZZpNF-AG8C3yS6cmGr0eB0TojnuG3v2rNEvNVyVcUmjCEKyMsDhpDo8a3QUguH4PF4lM3shI2zVjQc47_AEiWo8WzNMNECUG8H9MIlWtDfvyB-woFXfWcP6nEvMpEfaxZPx3AKg2sFxuGr3U6iVtJj5dyQEo83Le89W_YBKKahnCX--cKj2DMdhvV9yudB8kAVngvKJ4QUyfRBn3lXzo7jdhgaBCZjrmQ8DPaYIcuXCvD1OuihDIs5urTm_sNheisrLDiDC9lj6mQoUoWc6m-FZVeWXOTAvI1HQveDYZBBiYxLarg7A_O1YXdWEHP4ke59K8k1mOC4T9da2YEs_Px7yhqyj5cgXx1UetoL9yUyH0g-8gadjKY4Yhhnzvz0bKV9LBlhyXzVYcetffdoYJl7SSkDpohXSJEjdvr_M6ZZKapwxReMx4nPU4GEmHXWeKNc9TOhVCEvaKsVKeyJbLsXfHOFQmttlDsefjSfu17D-Hs7_1AIBZLwwT84YmPW2VFVE-5oLCFzIzmpNNPCV2IWg8xge86yTX6Y7flvWQr3E7QxcYFB4S5vgdZNfExH7uwKOICaee-m8a437XDCwyf7FbfjtqiXlVlWdUE4Cp5le3EaGFvZ3QkfiuKSBOwgTJItKMsGioTsjX66t4jp4aHuxYBoiT7S9PGqungDokoabQn7--4NtF8iI49fTZC6G269QJnX7bsA3-6WfXar-LyPK8kQmfBQYEGAEKq3m6yNQQ\",\"expiresOn\":\"1780470490\",\"lastUpdatedAt\":\"1780384093284\"}"
+        },
+        {
+          "name": "802f03aa-271f-47b3-aded-b015c73645d3.d0dd8c54-2968-4466-a8e7-9684352ae906-ociamdev.ciamlogin.com-d0dd8c54-2968-4466-a8e7-9684352ae906",
+          "value": "{\"authorityType\":\"MSSTS\",\"clientInfo\":\"eyJ1aWQiOiI4MDJmMDNhYS0yNzFmLTQ3YjMtYWRlZC1iMDE1YzczNjQ1ZDMiLCJ1dGlkIjoiZDBkZDhjNTQtMjk2OC00NDY2LWE4ZTctOTY4NDM1MmFlOTA2In0\",\"homeAccountId\":\"802f03aa-271f-47b3-aded-b015c73645d3.d0dd8c54-2968-4466-a8e7-9684352ae906\",\"environment\":\"ociamdev.ciamlogin.com\",\"realm\":\"d0dd8c54-2968-4466-a8e7-9684352ae906\",\"localAccountId\":\"802f03aa-271f-47b3-aded-b015c73645d3\",\"username\":\"automationscript@outamationlabs.com\",\"name\":\"Automation Script\",\"tenantProfiles\":[{\"tenantId\":\"99b9e26b-fd47-4834-97c3-a89134c47c4e\",\"localAccountId\":\"c03ad7c8-0107-4491-98ed-256d0f7c891c\",\"name\":\"Automation Script\",\"isHomeTenant\":false}],\"lastUpdatedAt\":\"1780384093283\"}"
+        },
+        {
+          "name": "msal.309012ad-f980-405b-897b-e98a865128aa.active-account",
+          "value": "c03ad7c8-0107-4491-98ed-256d0f7c891c"
+        },
+        {
+          "name": "server-telemetry-309012ad-f980-405b-897b-e98a865128aa",
+          "value": "{\"failedRequests\":[],\"errors\":[],\"cacheHits\":3}"
+        },
+        {
+          "name": "msal.309012ad-f980-405b-897b-e98a865128aa.active-account-filters",
+          "value": "{\"homeAccountId\":\"802f03aa-271f-47b3-aded-b015c73645d3.d0dd8c54-2968-4466-a8e7-9684352ae906\",\"localAccountId\":\"c03ad7c8-0107-4491-98ed-256d0f7c891c\",\"tenantId\":\"99b9e26b-fd47-4834-97c3-a89134c47c4e\",\"lastUpdatedAt\":\"1780384093292\"}"
+        },
+        {
+          "name": "msal.version",
+          "value": "3.30.0"
+        },
+        {
+          "name": "802f03aa-271f-47b3-aded-b015c73645d3.d0dd8c54-2968-4466-a8e7-9684352ae906-ociamdev.ciamlogin.com-accesstoken-309012ad-f980-405b-897b-e98a865128aa-99b9e26b-fd47-4834-97c3-a89134c47c4e-api://309012ad-f980-405b-897b-e98a865128aa/info.read--",
+          "value": "{\"homeAccountId\":\"802f03aa-271f-47b3-aded-b015c73645d3.d0dd8c54-2968-4466-a8e7-9684352ae906\",\"credentialType\":\"AccessToken\",\"secret\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Ims5eG1TdFE4VDlUNHNFOXBuQ25fLXU0eVVzcyJ9.eyJhdWQiOiIzMDkwMTJhZC1mOTgwLTQwNWItODk3Yi1lOThhODY1MTI4YWEiLCJpc3MiOiJodHRwczovLzk5YjllMjZiLWZkNDctNDgzNC05N2MzLWE4OTEzNGM0N2M0ZS5jaWFtbG9naW4uY29tLzk5YjllMjZiLWZkNDctNDgzNC05N2MzLWE4OTEzNGM0N2M0ZS92Mi4wIiwiaWF0IjoxNzgwMzgzODAzLCJuYmYiOjE3ODAzODM4MDMsImV4cCI6MTc4MDM4ODQ2NiwiYWlvIjoiQVdRQW0vOGNBQUFBYmxsQVU4U01mWXJBMVVSaDZQeGQ1aG9tZjhPSnkwRnNaOWpISUFQZ0FJM3RUN0ZQZDYxd3EzcXFpWUNzaFNKMlo1STM0KzJQOVY1VXRhUHd6cnJHOVdOVWxQTHNyNlNRV05oT0pPaDFVd0xVUjJSQXB0ZVVOelJLUitiUktuS1UiLCJhenAiOiIzMDkwMTJhZC1mOTgwLTQwNWItODk3Yi1lOThhODY1MTI4YWEiLCJhenBhY3IiOiIwIiwiaWRwIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvZDBkZDhjNTQtMjk2OC00NDY2LWE4ZTctOTY4NDM1MmFlOTA2LyIsIm5hbWUiOiJBdXRvbWF0aW9uIFNjcmlwdCIsIm9pZCI6ImMwM2FkN2M4LTAxMDctNDQ5MS05OGVkLTI1NmQwZjdjODkxYyIsInByZWZlcnJlZF91c2VybmFtZSI6ImF1dG9tYXRpb25zY3JpcHRAb3V0YW1hdGlvbmxhYnMuY29tIiwicmgiOiIxLkFjOEFhLUs1bVVmOU5FaVh3NmlSTk1SOFRxMFNrRENBLVZ0QWlYdnBpb1pSS0tvQUFFdlBBQS4iLCJzY3AiOiJpbmZvLnJlYWQiLCJzaWQiOiIwMDViZTM4YS0yZTRjLTg1NmMtOGUyNi03OTg2ODQ0ODRkZGUiLCJzdWIiOiJSb1puWlNqWHpaLXNaWVpCVlZTeGVZM1lsRVdUMVhUU0tnVXdZa3JRa0h3IiwidGlkIjoiOTliOWUyNmItZmQ0Ny00ODM0LTk3YzMtYTg5MTM0YzQ3YzRlIiwidXRpIjoiQU9BbnEzdlRkRXk3N2NfZHVQUUhBQSIsInZlciI6IjIuMCIsInhtc19mdGQiOiJidzNnU3VSUm1mcDZiNThOSVlYOE10a203UFBIZ0lSZ3VTUWpMQ1hiMWZzQmRYTnpiM1YwYUMxa2MyMXoifQ.WiabkP8LpsolpVUVnLfLL5EzwBFKjHKt2moHF600CXoFL-d_gHdLOcVw4xpcU83-JNnN7RI1XVbgw8Ld8p6ujxzYnfYymFFDt5hjpLn37bgJ6XAWmzaOiTTodczhV4Wlfk0uIhqmnFZMSgfPTuuJB5_DE0lf5To00TgII3VQejQs-vnzfHPkLOWZxIt0PeTQuUq79rqEWBGTm7qQKUZdGbbtLaNary_f_amGiFe6uDBVYEkBxZgexoIJt8lk0V1n9_zsU7eUBgLuQELFEMyiYy4VYTh3gZOjhJ37W7ssQ8fn46aMoVQR3jNs5JsZ3aLuh9MoroqtrKQHQuM4YvFr6w\",\"cachedAt\":\"1780384093\",\"expiresOn\":\"1780388452\",\"extendedExpiresOn\":\"1780392813\",\"environment\":\"ociamdev.ciamlogin.com\",\"clientId\":\"309012ad-f980-405b-897b-e98a865128aa\",\"realm\":\"99b9e26b-fd47-4834-97c3-a89134c47c4e\",\"target\":\"api://309012ad-f980-405b-897b-e98a865128aa/info.read\",\"tokenType\":\"Bearer\",\"lastUpdatedAt\":\"1780384093284\"}"
+        }
+      ]
+    }
+  ]
+}
