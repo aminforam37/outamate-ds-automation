@@ -1,18 +1,8 @@
-# Ignore environment variable files
 .env
-
-# Node dependencies
 node_modules/
-
-# Playwright test artifacts
-test-results/   
+test-results/
 playwright-report/
 failure-screenshots/
-
-# Ignore specific test files
 tests/OrderCreation.spec.ts
 tests/Order_Creation1.spec.ts
 tests/ver.spec.ts
-
-
-
