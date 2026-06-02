@@ -13,43 +13,6 @@ const successMessageSelector = 'Login : Successfully Login';
 const errorMessageSelector = 'Login : Login failed'; 
 
 
-// test.beforeEach('Login', async ({ page })=> {
-
-  
-//  await page.goto('https://dev-outamateds.outamationlabs.com/');
-//   await page.waitForTimeout(1500);  
-
-//   console.log("\x1b[1mLogin:\x1b[0m");
-//   console.log("🔐 Starting Login Module Tests...");
-
-//   const Email = "foram.amin@outamation.com ";
-//   const Password = "Pramukh@888";
-//   const successMessageSelector = 'Login : Successfully Login'; 
-//   const errorMessageSelector = 'Login : Login failed'; 
-
-//   await page.locator('input[name="username"]').fill(Email);
-//   await page.waitForTimeout(1500); 
-//   await page.locator('button[type="submit"]').click();
-//   await page.locator('input[name="passwd"]').fill(Password);
-//   await page.locator('button[type="submit"]').click();
-//   await page.waitForTimeout(1500); 
-//   await page.locator('[type="submit"]').click();
-//   await page.waitForTimeout(1500); 
-
-//   if (successMessageSelector) {
-//         console.log("✅ User logged in Successfully.");
-//         await page.waitForTimeout(1500); 
-//     } else if (errorMessageSelector) {
-//         console.log("❌ User login failed.");
-//         await page.waitForTimeout(1500); 
-//     } else {
-//         console.log('Login status unknown: No success or error message displayed.');
-//         await page.waitForTimeout(1500); 
-//     }
-
-
-// });
-
 test('@Outamate DS: Order Creation ', async ({ page }) => {
 
     await page.goto('/app/internal/assignments/dashboard/order-status');

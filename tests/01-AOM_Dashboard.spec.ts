@@ -12,66 +12,6 @@ const successMessageSelector = 'Login : Successfully Login';
 const errorMessageSelector = 'Login : Login failed'; 
 
 
-// test.beforeEach('Login', async ({ page })=> {
-
-  
-//  await page.goto('https://dev-outamateds.outamationlabs.com/');
-//   await page.waitForTimeout(1500);  
-
-//   console.log("\x1b[1mLogin:\x1b[0m");
-//   console.log("🔐 Starting Login Module Tests...");
-
-//    const Email = "foram.amin@outamation.com ";
-//   const Password = "Pramukh@888";
-//   const successMessageSelector = 'Login : Successfully Login'; 
-//   const errorMessageSelector = 'Login : Login failed'; 
-
-//   await page.locator('input[name="username"]').fill(Email);
-//   await page.waitForTimeout(1500); 
-//   await page.locator('button[type="submit"]').click();
-//   await page.locator('input[name="passwd"]').fill(Password);
-//   await page.locator('button[type="submit"]').click();
-//   await page.waitForTimeout(1500); 
-//   await page.locator('[type="submit"]').click();
-//   await page.waitForTimeout(1500); 
-
-//   if (successMessageSelector) {
-//         console.log("✅ User logged in Successfully and redirected to Dashboard.");
-//         await page.waitForTimeout(1500); 
-//     } else if (errorMessageSelector) {
-//         console.log("❌ User login failed or user not redirected to Dashboard.");
-//         await page.waitForTimeout(1500); 
-//     } else {
-//         console.log('Login status unknown: No success or error message displayed.');
-//         await page.waitForTimeout(1500); 
-//     }
-
-//     //console.log(page.url());
-//     if (page.url().includes('https://dev-outamateds.outamationlabs.com/')) {
-
-//         status = 'Pass';  
-//         addResult({
-//             srNo: getSrCounter().toString(),
-//             module: 'Login',
-//             status: 'Pass',
-//             URL: '<a href="https://dev-outamateds.outamationlabs.com/">Login</a>'
-//         });
-        
-
-//     } else {
-//         addResult({
-//             srNo: getSrCounter().toString(),
-//             module: 'Login',
-//             status: 'Fail',
-//             URL: '<a href="https://dev-outamateds.outamationlabs.com/">Login</a>'
-//         });
-//     }
-//      incrementSrCounter();
-
-
-
-// });
-
 test('@Outamate DS: Dashboard Received ', async ({ page , baseURL}) => {
 
     await page.goto(baseURL ??  '/app/internal/assignments/dashboard/order-status');
