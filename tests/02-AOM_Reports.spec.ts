@@ -13,6 +13,7 @@ const successMessageSelector = 'Login : Successfully Login';
 const errorMessageSelector = 'Login : Login failed'; 
 
 
+
 // test.beforeEach('Login', async ({ page })=> {
 
   
@@ -49,6 +50,7 @@ const errorMessageSelector = 'Login : Login failed';
 
 // });
 
+
 test('@Outamate DS: Reports ', async ({ page, baseURL }) => {
     const base = (baseURL ?? '').replace(/\/$/, '');
 
@@ -75,15 +77,12 @@ test('@Outamate DS: Reports ', async ({ page, baseURL }) => {
     //Reports 
     const sidebar = page.locator('.sidebar, .sidenav, .sidebar-area');
 
-await sidebar.evaluate((el: HTMLElement) => {
+    await sidebar.evaluate((el: HTMLElement) => {
     el.scrollTop = el.scrollHeight;
-});
+    });
 
-const reports = page.locator('mat-expansion-panel-header', {
-    hasText: 'Reports'
-});
-
-await reports.click();
+    const reports = page.locator('mat-expansion-panel-header', { hasText: 'Reports'});
+    await reports.click();
 
     console.log("\x1b[1m1.New Orders Export Reports:\x1b[0m");
     //Order Export Report
@@ -101,7 +100,7 @@ await reports.click();
     // await page.waitForTimeout(1500);
 
     // Base folder
-    const baseReportsDir = 'C:\\DS_playwright-test\\AOM_Reports';
+    const baseReportsDir = 'C:\\DS_playwright-test 1\\AOM_Reports';
 
     // Ensure base folder exists
     if (!fs.existsSync(baseReportsDir)) {
@@ -109,14 +108,13 @@ await reports.click();
     }
 
     // Find existing timestamp folder (from previous run)
-    const existingFoldersCOGS = fs.readdirSync(baseReportsDir)
-    .filter(item => fs.statSync(path.join(baseReportsDir, item)).isDirectory());
+    const existingFoldersCOGS = fs.readdirSync(baseReportsDir) .filter(item => fs.statSync(path.join(baseReportsDir, item)).isDirectory());
 
     //  If such folder exists, delete it
     if (existingFoldersCOGS.length > 0) {
     for (const folder of existingFoldersCOGS) {
         const fullPath = path.join(baseReportsDir, folder);
-        //console.log("Deleting previous report folder:", fullPath);
+      //  console.log("Deleting previous report folder:", fullPath);
         fs.rmSync(fullPath, { recursive: true, force: true });
     }
     }
@@ -124,10 +122,8 @@ await reports.click();
     //  Create a NEW folder with datetime name
     const timestampCOGS = new Date().toISOString().replace(/[:]/g, '-').replace(/\..+/, '');
     const currentRunDir = path.join(baseReportsDir, timestampCOGS);
-
     fs.mkdirSync(currentRunDir);
-
-    //console.log("Created new report folder:", currentRunDir);
+   // console.log("Created new report folder:", currentRunDir);
     
 
     // Wait for download event
@@ -135,7 +131,6 @@ await reports.click();
 
     // Click Export button
     await page.locator('button[aria-label="Export Orders"]').click();
-
     await page.waitForTimeout(1500);
 
     // Select Excel option
