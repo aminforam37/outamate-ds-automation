@@ -1,0 +1,10 @@
+.env
+node_modules/
+test-results/
+playwright-report/
+failure-screenshots/
+tests/OrderCreation.spec.ts
+tests/Order_Creation1.spec.ts
+tests/ver.spec.ts
+tests/AOM_TestOrder.spec.ts
+tests/LRP_Dashboard.spec.ts
