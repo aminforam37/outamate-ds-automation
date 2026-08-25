@@ -19,8 +19,12 @@ await page.goto(baseURL ??  '/');
     
     const Email = process.env.LOGIN_Username || '';
     const Password = process.env.LOGIN_Password || '';
-  const successMessageSelector = 'Login : Successfully Login'; 
-  const errorMessageSelector = 'Login : Login failed'; 
+
+  if (!Email || !Password) {
+    throw new Error(
+      'LOGIN_Username / LOGIN_Password are not set in .env — cannot authenticate.'
+    );
+  }
 
   await page.locator('input[name="username"]').fill(Email);
   await page.waitForTimeout(1500); 
@@ -31,44 +35,33 @@ await page.goto(baseURL ??  '/');
   await page.locator('[type="submit"]').click();
   await page.waitForTimeout(1500); 
 
-  if (successMessageSelector) {
-        console.log("✅ User logged in Successfully and redirected to Dashboard.");
-        await page.waitForTimeout(1500); 
-    } else if (errorMessageSelector) {
-        console.log("❌ User login failed or user not redirected to Dashboard.");
-        await page.waitForTimeout(1500); 
-    } else {
-        console.log('Login status unknown: No success or error message displayed.');
-        await page.waitForTimeout(1500); 
-    }
+  // Real post-login signal: the dashboard module tiles only render once
+  // authentication has actually succeeded. The previous check tested a non-empty
+  // string literal (`if (successMessageSelector)`), so it was always true and
+  // reported "logged in successfully" even on a failed login.
+  let loggedIn = true;
+  try {
+    await page.locator('h6.module-title').first().waitFor({ state: 'visible', timeout: 30_000 });
+    console.log("✅ User logged in Successfully and redirected to Dashboard.");
+  } catch {
+    loggedIn = false;
+    console.log("❌ User login failed or user not redirected to Dashboard.");
+  }
 
-    //console.log(page.url());
-    if (page.url().startsWith(baseURL ?? '')) {
-
-        status = 'Pass';
-        addResult({
-            srNo: getSrCounter().toString(),
-            module: 'Login',
-            status: 'Pass',
-            URL: `<a href="${baseURL}">Login</a>`
-        });
-
-
-    } else {
-        addResult({
-            srNo: getSrCounter().toString(),
-            module: 'Login',
-            status: 'Fail',
-            URL: `<a href="${baseURL}">Login</a>`
-        });
-    }
+    status = loggedIn ? 'Pass' : 'Fail';
+    addResult({
+        srNo: getSrCounter().toString(),
+        module: 'Login',
+        status,
+        URL: `<a href="${baseURL}">Login</a>`
+    });
      incrementSrCounter();
 
-    // Wait until dashboard loads
-    await page.waitForLoadState('networkidle');
-
-    // Validation
-    await expect(page).toHaveURL(/outamationlabs/);
+    // Fail the setup project outright on a bad login. Previously this only
+    // asserted the hostname, which the login page itself satisfies — so a wrong
+    // password still saved a useless user.json and left every downstream spec
+    // failing on unrelated locator errors.
+    expect(loggedIn, 'dashboard module tiles visible after login').toBe(true);
 
     console.log('✅ Login Successful');
 

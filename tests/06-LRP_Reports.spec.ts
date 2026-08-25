@@ -10,15 +10,15 @@ let status = 'Fail';
 let isPassed = true;
 
 
-//@Outamate DS:
 
+//@Outamate DS:
 test(' Reports ', async ({ page, baseURL }) => {
     const base = (baseURL ?? '').replace(/\/$/, '');
 
-    await page.goto('/app/internal/assignments/dashboard/order-status');
+    await page.goto('/app/internal/lien-release/dashboard/order-status');
     await page.waitForTimeout(1500);
-    // Navigate to AOM
-    await page.locator('h6[class="module-title"]').nth(1).click();
+    // Navigate to LRP
+    await page.locator('h6[class="module-title"]').nth(2).click();
     await page.waitForTimeout(1500);
 
     console.log("");
@@ -27,7 +27,7 @@ test(' Reports ', async ({ page, baseURL }) => {
     const reportBase = getSrCounter(); // Capture current srCounter value for this report module
 
     addResult({
-        product: "AOM",
+        product: "LRP",
         srNo: getSrCounter().toString(),
         module: 'Reports',
         status: 'Pass',
@@ -62,7 +62,7 @@ test(' Reports ', async ({ page, baseURL }) => {
     // await page.waitForTimeout(1500);
 
     // Base folder
-    const baseReportsDir = 'C:\\DS_playwright-test 1\\AOM_Reports';
+    const baseReportsDir = 'C:\\DS_playwright-test 1\\LRP_Reports';
 
     // Ensure base folder exists
     if (!fs.existsSync(baseReportsDir)) {
@@ -223,23 +223,6 @@ test(' Reports ', async ({ page, baseURL }) => {
 
   //console.log('File is not empty/corrupted');
 
-//   if (page.url().includes('https://dev-outamateds.outamationlabs.com/app/internal/assignments/reports/pipeline-report')) {
-
-//       addResult({
-//             srNo: `${reportBase}.2`,
-//             module: 'Pipeline Report',
-//             status: 'Pass',
-//             URL: `<a href="${base}/app/internal/assignments/reports/pipeline-report">Pipeline Report</a>`
-//         });
-//     } else {
-//         addResult({
-//             srNo: `${reportBase}.2`,
-//             module: 'Pipeline Report',
-//             status: 'Fail',
-//             URL: `<a href="${base}/app/internal/assignments/reports/pipeline-report">Pipeline Report</a>`
-//         });
-//     }
-
 
     //Reports 
     await page.locator('mat-expansion-panel').filter({ hasText: 'Reports' }).click();
@@ -376,22 +359,6 @@ test(' Reports ', async ({ page, baseURL }) => {
 
   //console.log('File is not empty/corrupted');
 
-//   if (page.url().includes('https://dev-outamateds.outamationlabs.com/app/internal/assignments/reports/revenue-report')) {
-
-//         addResult({
-//             srNo: `${reportBase}.3`,
-//             module: 'Revenue Report',
-//             status: 'Pass',
-//             URL: `<a href="${base}/app/internal/assignments/reports/revenue-report">Revenue Report</a>`
-//         });
-//     } else {
-//         addResult({
-//             srNo: `${reportBase}.3`,
-//             module: 'Revenue Report',
-//             status: 'Fail',
-//             URL: `<a href="${base}/app/internal/assignments/reports/revenue-report">Revenue Report</a>`
-//         });
-//     }
 
     //Reports 
     await page.locator('mat-expansion-panel').filter({ hasText: 'Reports' }).click();
@@ -530,22 +497,6 @@ test(' Reports ', async ({ page, baseURL }) => {
 
     //console.log('File is valid and not empty');
 
-    // if (page.url().includes('https://dev-outamateds.outamationlabs.com/app/internal/assignments/reports/fee-cogs-report')) {
-
-    //     addResult({
-    //         srNo: `${reportBase}.4`,
-    //         module: 'Fee & COGS Report',
-    //         status: 'Pass',
-    //         URL: `<a href="${base}/app/internal/assignments/reports/fee-cogs-report">Fee & COGS Report</a>`
-    //     });
-    // } else {
-    //     addResult({
-    //         srNo: `${reportBase}.4`,
-    //         module: 'Fee & COGS Report',
-    //         status: 'Fail',
-    //         URL: `<a href="${base}/app/internal/assignments/reports/fee-cogs-report">Fee & COGS Report</a>`
-    //     });
-    // }
     
     //Reports 
     await page.locator('mat-expansion-panel').filter({ hasText: 'Reports' }).click();
@@ -612,105 +563,7 @@ test(' Reports ', async ({ page, baseURL }) => {
 
    // console.log('File is valid and not empty');
 
-    // if (page.url().includes('https://dev-outamateds.outamationlabs.com/app/internal/assignments/reports/quality-check-report')) {
-
-    //     addResult({
-    //         srNo: `${reportBase}.5`,
-    //         module: 'Quality Check Report',
-    //         status: 'Pass',
-    //         URL: `<a href="${base}/app/internal/assignments/reports/quality-check-report">Quality Check Report</a>`
-    //     });
-    // } else {
-    //     addResult({
-    //         srNo: `${reportBase}.5`,
-    //         module: 'Quality Check Report',
-    //         status: 'Fail',
-    //         URL: `<a href="${base}/app/internal/assignments/reports/quality-check-report">Quality Check Report</a>`
-    //     });
-    // }
-
-
-    //Reports 
-    await page.locator('mat-expansion-panel').filter({ hasText: 'Reports' }).click();
-    await page.waitForTimeout(1500);
-
-    console.log("\x1b[1m6.Production Reports:\x1b[0m");
-    // Production Report
-    await page.locator('li[class="sidemenu-item ng-star-inserted"]').nth(6).click();
-    await page.waitForTimeout(1500);
-    //Date Picker
-    await page.locator('div[class="mat-mdc-form-field-icon-suffix ng-star-inserted"]').click();
-    await page.waitForTimeout(1500);
-    await page.locator('button[class="mdc-button mat-mdc-button-base mat-mdc-button mat-unthemed"]').nth(6).click();
-    await page.waitForTimeout(1500);
-
-        // =================== DOWNLOAD LOGIC ====================
-
-  // Wait for download event
-    const downloadPromiseProd = page.waitForEvent('download');
-
-     // Click Export button
-    await page.locator('button[aria-label="Export"]').click();
-    await page.waitForTimeout(1500);
-
-  // Select Excel option
-  await page.locator('button[role="menuitem"]').nth(0).click();
-
-  // Capture download
-  const downloadProd = await downloadPromiseProd;
-
- // Original downloaded file name
-  const originalFileNameProd = await downloadProd.suggestedFilename();
-
-  // File extension
-  const extensionProd = path.extname(originalFileNameProd);
-
-  // Validate Excel format
-  expect(['.xlsx']).toContain(extensionProd);
-
-  // Save with SAME downloaded file name
-  const filePathProd = path.join(currentRunDir, originalFileNameProd);
-
-  // Save file directly into AOM_Reports folder
-  await downloadProd.saveAs(filePathProd);
-
-  console.log(`File downloaded successfully: ${originalFileNameProd}`);
-
-
-    // =================== VALIDATIONS ====================
-
-    // File exists?
-    expect(fs.existsSync(filePathProd)).toBeTruthy();
-    //console.log('File exists:', filePathProd);
-
-    // Correct extension?
-    expect(['.xlsx']).toContain(extensionProd);
-
-    // Not empty?
-    const statsProd = fs.statSync(filePathProd);
-    expect(statsProd.size).toBeGreaterThan(0);
-
-   // console.log('File is valid and not empty');
-
-    // if (page.url().includes('https://dev-outamateds.outamationlabs.com/app/internal/assignments/reports/standard-report')) {
-
-    //     addResult({
-    //         srNo: `${reportBase}.6`,
-    //         module: 'Production Report',
-    //         status: 'Pass',
-    //         URL: `<a href="${base}/app/internal/assignments/reports/standard-report">Production Report</a>`
-    //     });
-    // } else {
-    //     addResult({
-    //         srNo: `${reportBase}.6`,
-    //         module: 'Production Report',
-    //         status: 'Fail',
-    //         URL: `<a href="${base}/app/internal/assignments/reports/standard-report">Production Report</a>`
-    //     });
-    // }
-
-
-         const parentFolder = 'C:\\DS_playwright-test 1\\AOM_Reports';
+         const parentFolder = 'C:\\DS_playwright-test 1\\LRP_Reports';
 
          if (!fs.existsSync(parentFolder)) {
         console.log(`❌ Parent folder does not exist: ${parentFolder}`);
@@ -763,21 +616,21 @@ test(' Reports ', async ({ page, baseURL }) => {
             //console.log(`✅ New Orders Export Report — found ${count} file`);
             for (const f of files) //console.log(`     • ${f}`);
             addResult({
-                product: "AOM",
+                product: "LRP",
                 srNo: `${reportBase}.1`,
                 module: 'Orders Export Report',
                 status: 'Pass',
-                URL: `<a href="${base}/app/internal/assignments/reports/order-export">Order Export Report</a>`
+                URL: `<a href="${base}/app/internal/lien-release/reports/order-export">Order Export Report</a>`
             });
             } else {
           //   console.log(`❌ New Orders Export Report — expected 1, found ${count}`);
             for (const f of files) //console.log(`     • ${f}`);
             addResult({
-                product: "AOM",
+                product: "LRP",
                 srNo: `${reportBase}.1`,
                 module: 'Orders Export Report',
                 status: 'Fail',
-                URL: `<a href="${base}/app/internal/assignments/reports/order-export">Order Export Report</a>`
+                URL: `<a href="${base}/app/internal/lien-release/reports/order-export">Order Export Report</a>`
             });
             }
         }
@@ -789,21 +642,21 @@ test(' Reports ', async ({ page, baseURL }) => {
           //     console.log(`✅ Pipeline Report — found ${count} file`);
             for (const f of files) //console.log(`     • ${f}`);
             addResult({
-                product: "AOM",
+                product: "LRP",
                 srNo: `${reportBase}.2`,
                 module: 'Pipeline Report',
                 status: 'Pass',
-                URL: `<a href="${base}/app/internal/assignments/reports/pipeline-report">Pipeline Report</a>`
+                URL: `<a href="${base}/app/internal/lien-release/reports/pipeline-report">Pipeline Report</a>`
             });
             } else {
           //  console.log(`❌ Pipeline Report — expected 1, found ${count}`);
             for (const f of files) //console.log(`     • ${f}`);
             addResult({
-                product: "AOM",
+                product: "LRP",
                 srNo: `${reportBase}.2`,
                 module: 'Pipeline Report',
                 status: 'Fail',
-                URL: `<a href="${base}/app/internal/assignments/reports/pipeline-report">Pipeline Report</a>`
+                URL: `<a href="${base}/app/internal/lien-release/reports/pipeline-report">Pipeline Report</a>`
             });
             }
         }
@@ -813,7 +666,7 @@ test(' Reports ', async ({ page, baseURL }) => {
             const { count, files } = countFiles('revenue');
             
             addResult({
-                    product: "AOM",
+                product: "LRP",
                     srNo: `${reportBase}.3`,
                     module: 'Revenue Reports',
                     status: 'Pass',
@@ -825,11 +678,11 @@ test(' Reports ', async ({ page, baseURL }) => {
           //     console.log(`✅ Revenue Report — found ${count} files`);
         files.forEach((f, index) => { //console.log(`     • ${f}`);
             addResult({
-                product: "AOM",
+                product: "LRP",
                 srNo: `${reportBase}.3.${index + 1}`,
                 module:  `Revenue Report ${index + 1}`,
                 status: 'Pass',
-                URL: `<a href="${base}/app/internal/assignments/reports/revenue-report">Revenue Report</a>`
+                URL: `<a href="${base}/app/internal/lien-release/reports/revenue-report">Revenue Report</a>`
             });
         });
 
@@ -837,11 +690,11 @@ test(' Reports ', async ({ page, baseURL }) => {
           //  console.log(`❌ Revenue Report — expected 2, found ${count}`);
         files.forEach((f, index) => { //console.log(`     • ${f}`);
             addResult({
-                product: "AOM",
+                product: "LRP",
                 srNo: `${reportBase}.3.${index + 1}`,
                 module: `Revenue Report ${index + 1}`,
                 status: 'Fail',
-                URL: `<a href="${base}/app/internal/assignments/reports/revenue-report">Revenue Report</a>`
+                URL: `<a href="${base}/app/internal/lien-release/reports/revenue-report">Revenue Report</a>`
             });
         });            
             }
@@ -854,7 +707,7 @@ test(' Reports ', async ({ page, baseURL }) => {
             const count = files.length;
 
         addResult({
-            product: "AOM",
+            product: "LRP",
                     srNo: `${reportBase}.4`,
                     module: 'Fee & COGS Reports',
                     status: 'Pass',
@@ -866,22 +719,22 @@ test(' Reports ', async ({ page, baseURL }) => {
          files.forEach((f, index) => { //console.log(`     • ${f}`);
             
             addResult({
-                product: "AOM",
+                product: "LRP",
                 srNo: `${reportBase}.4.${index + 1}`,
                 module: `Fee & COGS Report ${index + 1} `,
                 status: 'Pass',
-                URL: `<a href="${base}/app/internal/assignments/reports/fee-cogs-report">Fee & COGS Report</a>`
+                URL: `<a href="${base}/app/internal/lien-release/reports/fee-cogs-report">Fee & COGS Report</a>`
             });
           });  
             } else {
           //  console.log(`❌ COGS Report — expected 2, found ${count}`);
         files.forEach((f, index) => { //console.log(`     • ${f}`);
             addResult({
-                product: "AOM",
+                product: "LRP",
                 srNo: `${reportBase}.4.${index + 1}`,
                 module: `Fee & COGS Report ${index + 1}`,
                 status: 'Fail',
-                URL:`<a href="${base}/app/internal/assignments/reports/fee-cogs-report">Fee & COGS Report</a>`
+                URL:`<a href="${base}/app/internal/lien-release/reports/fee-cogs-report">Fee & COGS Report</a>`
             });
         });    
             }
@@ -894,56 +747,33 @@ test(' Reports ', async ({ page, baseURL }) => {
        //     console.log(`✅ Quality Check Report — found ${count} file`);
             for (const f of files) //console.log(`     • ${f}`);
             addResult({
-                product: "AOM",
+                product: "LRP",
                 srNo: `${reportBase}.5`,
                 module: 'Quality Check Report',
                 status: 'Pass',
-                URL: `<a href="${base}/app/internal/assignments/reports/quality-check-report">Quality Check Report</a>`
+                URL: `<a href="${base}/app/internal/lien-release/reports/quality-check-report">Quality Check Report</a>`
             });
             } else {
          //   console.log(`❌ Quality Check Report — expected 1, found ${count}`);
             for (const f of files) //console.log(`     • ${f}`);
             addResult({
-                product: "AOM",
+                product: "LRP",
                 srNo: `${reportBase}.5`,
                 module: 'Quality Check Report',
                 status: 'Fail',
-                URL: `<a href="${base}/app/internal/assignments/reports/quality-check-report">Quality Check Report</a>`
+                URL: `<a href="${base}/app/internal/lien-release/reports/quality-check-report">Quality Check Report</a>`
             });
             }
         }
 
-        // ---------- 6. Production Report (expect 1) ----------
-        {
-            const { count, files } = countFiles('production-report');
-            if (count === 1) {
-          //  console.log(`✅ Production Report — found ${count} file`);
-            for (const f of files) //console.log(`     • ${f}`);
-            addResult({
-                product: "AOM",
-                srNo: `${reportBase}.6`,
-                module: 'Production Report',
-                status: 'Pass',
-                URL:  `<a href="${base}/app/internal/assignments/reports/standard-report">Production Report</a>`
-            });
-            } else {
-         //   console.log(`❌ Production Report — expected 1, found ${count}`);
-            for (const f of files) //console.log(`     • ${f}`);
-            addResult({
-                product: "AOM",
-                srNo: `${reportBase}.6`,
-                module: 'Production Report',
-                status: 'Fail',
-                URL:  `<a href="${base}/app/internal/assignments/reports/standard-report">Production Report</a>`
-            });
-            }
-        }        
 
 
     
     // const results = getResults();
     //  await sendMail(results);
 
-});    
+});
+
+
 
 

@@ -14,9 +14,9 @@ let isPassed = true;
 
 test(' Dashboard Received ', async ({ page , baseURL}) => {
 
-    await page.goto(baseURL ??  '/app/internal/assignments/dashboard/order-status');
+    await page.goto(baseURL ??  '/app/internal/research/dashboard/order-status');
     await page.waitForLoadState('networkidle');
-    await page.locator('h6[class="module-title"]').nth(1).click();
+    await page.locator('h6[class="module-title"]').nth(0).click();
     await page.waitForTimeout(1500);
 
     console.log("");
@@ -55,7 +55,7 @@ test(' Dashboard Received ', async ({ page , baseURL}) => {
     await page.waitForTimeout(500);  
 
     //All Orders Grid
-    const allOrdersGridItem = page.locator('a[href="/app/internal/assignments/order-stage/orders"]').click(); // 'li[class="sidemenu-item ng-star-inserted"]
+    const allOrdersGridItem = page.locator('a[href="/app/internal/research/order-stage/orders"]').click(); // 'li[class="sidemenu-item ng-star-inserted"]
    // await allOrdersGridItem.waitFor({ state: 'visible' });
     // await allOrdersGridItem.click();
    // await page.locator('li[class="sidemenu-item ng-star-inserted"]').nth(9).click();
@@ -67,7 +67,7 @@ test(' Dashboard Received ', async ({ page , baseURL}) => {
         const statusesDueTomorrow = ['HOLD', 'FEE INCREASE', 'SEARCH INQUIRIES','COMPLETED - PROPERTY NOT FOUND'];
 
         // Open filter only once
-        await page.locator('div.ag-floating-filter-button').nth(7).click();
+        await page.locator('div.ag-floating-filter-button').nth(5).click();
 
         for (const status of statusesDueTomorrow) {
 
@@ -108,7 +108,7 @@ test(' Dashboard Received ', async ({ page , baseURL}) => {
         const statusesDuein2days = ['HOLD', 'FEE INCREASE', 'SEARCH INQUIRIES','COMPLETED - PROPERTY NOT FOUND'];
 
         // Open filter only once
-        await page.locator('div.ag-floating-filter-button').nth(7).click();
+        await page.locator('div.ag-floating-filter-button').nth(5).click();
 
         for (const status of statusesDuein2days) {
 
@@ -168,46 +168,11 @@ test(' Dashboard Received ', async ({ page , baseURL}) => {
         await page.locator('span.chip-label:has-text("Overdue")').click();
         await page.waitForTimeout(1500);
 
-        // // Click on the filter icon for the "Status" column
-        // await page.locator('div[class="ag-floating-filter-button"]').nth(7).click();
-        // await page.locator('input[aria-label="Search filter values"]').pressSequentially('HOLD', { delay: 50 });
-        // await page.waitForTimeout(1500);
-        // await page.locator('div[class="ag-input-field-label ag-label ag-checkbox-label ag-label-ellipsis"]').nth(1).click();
-        // await page.waitForTimeout(1500);
-
-        // //Click on the filter icon for the "Status" column
-        // await page.locator('input[aria-label="Search filter values"]').clear();
-        // await page.waitForTimeout(500);
-        // await page.locator('input[aria-label="Search filter values"]').pressSequentially('FEE INCREASE', { delay: 50 });
-        // await page.waitForTimeout(1500);
-        // await page.locator('div[class="ag-input-field-label ag-label ag-checkbox-label ag-label-ellipsis"]').nth(1).click();
-        // await page.waitForTimeout(1500);
-
-        // //Click on the filter icon for the "Status" column
-        // await page.locator('input[aria-label="Search filter values"]').clear();
-        // await page.waitForTimeout(500);
-        // await page.locator('input[aria-label="Search filter values"]').pressSequentially('SEARCH INQUIRIES', { delay: 50 });
-        // await page.waitForTimeout(1500);
-        // // await page.locator('div[class="ag-input-field-label ag-label ag-checkbox-label ag-label-ellipsis"]').nth(1).click();
-        // // await page.waitForTimeout(3000);
-
-    
-
-        // const OverdueGrid = await page.locator('span[ref="lbRecordCount"]').innerText();
-        // await page.waitForTimeout(1500);
-        // console.log('Overdue Grid Count:', OverdueGrid);
-
-        // if (dashboardOverdue === OverdueGrid) {
-        //     console.log('✅ The counts match!');
-        // } else {
-        //     isPassed = false;
-        //     console.log(`❌ The counts do not match. Dashboard: ${dashboardOverdue}, Overdue Grid Count: ${OverdueGrid}`);
-        // }
-
-        const statuses = ['HOLD', 'FEE INCREASE', 'SEARCH INQUIRIES'];
+      
+        const statuses = ['HOLD', 'FEE INCREASE', 'SEARCH INQUIRIES', 'COMPLETED - PROPERTY NOT FOUND' , 'COMPLETED - DOCUMENT NOT FOUND'];
 
         // Open filter only once
-        await page.locator('div.ag-floating-filter-button').nth(7).click();
+        await page.locator('div.ag-floating-filter-button').nth(5).click();
 
         for (const status of statuses) {
 
@@ -271,7 +236,7 @@ test(' Dashboard Received ', async ({ page , baseURL}) => {
          const statusesRisk = ['HOLD', 'FEE INCREASE', 'SEARCH INQUIRIES'];
 
         // Open filter only once
-        await page.locator('div.ag-floating-filter-button').nth(7).click();
+        await page.locator('div.ag-floating-filter-button').nth(5).click();
 
         for (const status of statusesRisk) {
 
@@ -322,18 +287,9 @@ test(' Dashboard Received ', async ({ page , baseURL}) => {
         //Hold Grid
         await page.reload();
 
-        // // Order Entry
-        // await page.locator('span[class="title"]').nth(2).click();
-        // await page.waitForTimeout(1500);  
-        // //All Orders Grid
-        // await page.locator('li[class="sidemenu-item ng-star-inserted"]').nth(9).click();
-
-        // //Overdue Grid
-        // await page.locator('span.chip-label:has-text("Due Today")').click();
-        // await page.waitForTimeout(1500);
-
+      
         // Open Status filter
-        await page.locator('div.ag-floating-filter-button').nth(7).click();
+        await page.locator('div.ag-floating-filter-button').nth(5).click();
 
         // Wait for popup
         const searchInput = page.locator('input[aria-label="Search filter values"]');
@@ -343,11 +299,14 @@ test(' Dashboard Received ', async ({ page , baseURL}) => {
         await page.getByText('(Select All)').click();
         await page.waitForTimeout(1000);
 
+        const statusesHold = ['HOLD', 'FEE INCREASE', 'SEARCH INQUIRIES'];
         // Search HOLD
-        await searchInput.fill('HOLD');
-        await page.waitForTimeout(1000);
-        await page.getByText('HOLD', { exact: true }).click();
-        await page.waitForTimeout(1000);
+        for (const status of statusesHold) {
+            await searchInput.fill(status);
+            await page.waitForTimeout(1000);
+            await page.getByText(status, { exact: true }).click();
+            await page.waitForTimeout(1000);
+        }
         // Close filter popup
         await page.keyboard.press('Escape');
 
@@ -379,7 +338,7 @@ test(' Dashboard Received ', async ({ page , baseURL}) => {
     expect.soft(holdMatch, `Hold: dashboard ${dashboardHold} vs grid ${HoldGrid}`).toBe(true);
 
     addResult({
-    product: "AOM",
+    product: "Research",
     srNo: getSrCounter().toString(),
     module: 'Dashboard',
     status: status,

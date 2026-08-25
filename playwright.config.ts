@@ -10,6 +10,7 @@ const isHeadless = process.env.HEADLESS !== 'false';
 const urls: Record<string, string> = {
   DEV: 'https://dev-outamateds.outamationlabs.com/',
   UAT: 'https://uat-outamateds.outamationlabs.com/',
+   DEMO : 'https://demo-outamateds.outamationlabs.com/',
 };
 
 export default defineConfig({

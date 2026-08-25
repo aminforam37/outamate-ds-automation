@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { faker } from '@faker-js/faker';
-import { addResult, getResults,  getSrCounter, incrementSrCounter } from '../resultsCollector'; 
+import { addResult, getResults,  getSrCounter, incrementSrCounter, resetSrCounter} from '../resultsCollector'; 
 import { sendMail } from '../mail';
 
 
@@ -8,15 +8,15 @@ import { sendMail } from '../mail';
 let status = 'Fail';
 let isPassed = true;
 
+resetSrCounter();
 
-
-//@Outamate DS: 
+//@Outamate DS:
 
 test(' Dashboard Received ', async ({ page , baseURL}) => {
 
-    await page.goto(baseURL ??  '/app/internal/assignments/dashboard/order-status');
+    await page.goto(baseURL ??  '/app/internal/lien-release/dashboard/order-status');
     await page.waitForLoadState('networkidle');
-    await page.locator('h6[class="module-title"]').nth(1).click();
+    await page.locator('h6[class="module-title"]').nth(2).click();
     await page.waitForTimeout(1500);
 
     console.log("");
@@ -43,7 +43,7 @@ test(' Dashboard Received ', async ({ page , baseURL}) => {
     const dashboardHold = await page.locator('h5[id="hold-count"]').innerText();
     await page.waitForTimeout(3000);
     console.log('Hold Count:', dashboardHold);
-    await page.waitForTimeout(1500);
+   await page.waitForTimeout(1500);
 
 
     console.log("\x1b[1m1.Open Counts:\x1b[0m");
@@ -55,7 +55,7 @@ test(' Dashboard Received ', async ({ page , baseURL}) => {
     await page.waitForTimeout(500);  
 
     //All Orders Grid
-    const allOrdersGridItem = page.locator('a[href="/app/internal/assignments/order-stage/orders"]').click(); // 'li[class="sidemenu-item ng-star-inserted"]
+    const allOrdersGridItem = page.locator('a[href="/app/internal/lien-release/order-stage/orders"]').click(); // 'li[class="sidemenu-item ng-star-inserted"]
    // await allOrdersGridItem.waitFor({ state: 'visible' });
     // await allOrdersGridItem.click();
    // await page.locator('li[class="sidemenu-item ng-star-inserted"]').nth(9).click();
@@ -67,7 +67,7 @@ test(' Dashboard Received ', async ({ page , baseURL}) => {
         const statusesDueTomorrow = ['HOLD', 'FEE INCREASE', 'SEARCH INQUIRIES','COMPLETED - PROPERTY NOT FOUND'];
 
         // Open filter only once
-        await page.locator('div.ag-floating-filter-button').nth(7).click();
+        await page.locator('div.ag-floating-filter-button').nth(6).click();
 
         for (const status of statusesDueTomorrow) {
 
@@ -108,7 +108,7 @@ test(' Dashboard Received ', async ({ page , baseURL}) => {
         const statusesDuein2days = ['HOLD', 'FEE INCREASE', 'SEARCH INQUIRIES','COMPLETED - PROPERTY NOT FOUND'];
 
         // Open filter only once
-        await page.locator('div.ag-floating-filter-button').nth(7).click();
+        await page.locator('div.ag-floating-filter-button').nth(6).click();
 
         for (const status of statusesDuein2days) {
 
@@ -207,7 +207,7 @@ test(' Dashboard Received ', async ({ page , baseURL}) => {
         const statuses = ['HOLD', 'FEE INCREASE', 'SEARCH INQUIRIES'];
 
         // Open filter only once
-        await page.locator('div.ag-floating-filter-button').nth(7).click();
+        await page.locator('div.ag-floating-filter-button').nth(6).click();
 
         for (const status of statuses) {
 
@@ -271,7 +271,7 @@ test(' Dashboard Received ', async ({ page , baseURL}) => {
          const statusesRisk = ['HOLD', 'FEE INCREASE', 'SEARCH INQUIRIES'];
 
         // Open filter only once
-        await page.locator('div.ag-floating-filter-button').nth(7).click();
+        await page.locator('div.ag-floating-filter-button').nth(6).click();
 
         for (const status of statusesRisk) {
 
@@ -333,7 +333,7 @@ test(' Dashboard Received ', async ({ page , baseURL}) => {
         // await page.waitForTimeout(1500);
 
         // Open Status filter
-        await page.locator('div.ag-floating-filter-button').nth(7).click();
+        await page.locator('div.ag-floating-filter-button').nth(6).click();
 
         // Wait for popup
         const searchInput = page.locator('input[aria-label="Search filter values"]');
@@ -379,7 +379,7 @@ test(' Dashboard Received ', async ({ page , baseURL}) => {
     expect.soft(holdMatch, `Hold: dashboard ${dashboardHold} vs grid ${HoldGrid}`).toBe(true);
 
     addResult({
-    product: "AOM",
+    product: "LRP",
     srNo: getSrCounter().toString(),
     module: 'Dashboard',
     status: status,
@@ -413,7 +413,4 @@ test(' Dashboard Received ', async ({ page , baseURL}) => {
     //  const results = getResults();
     //  await sendMail(results, baseURL);
 
-    //  const results = getResults();
-    //  await sendMail(results);
-     
 });

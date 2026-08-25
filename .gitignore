@@ -1,8 +1,26 @@
+# Secrets — never commit
 .env
+playwright/.auth/
+
+# Dependencies
 node_modules/
+
+# Playwright output
 test-results/
 playwright-report/
 failure-screenshots/
+temp/
+
+# Generated report downloads (recreated on every run)
+AOM_Reports/
+LRP_Reports/
+Research_Reports/
+
+# Documents/ holds upload fixtures that ARE tracked (INDEX.pdf, Prior SP.pdf,
+# 26219076.pdf, ...). Only the files the suite downloads into it are ignored.
+Documents/GeneratedDocument_*.pdf
+
+# Superseded specs, kept out of the repo
 tests/OrderCreation.spec.ts
 tests/Order_Creation1.spec.ts
 tests/ver.spec.ts

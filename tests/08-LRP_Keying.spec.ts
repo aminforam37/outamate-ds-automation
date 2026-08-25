@@ -46,19 +46,19 @@ async function assertTransition(
     console.log(` Inspected Transition Target Successfully: [${contextName}]`);
 }
 
-//@Outamate DS:
-test(' Keying Process ', async ({ page }) => {
+//
+test('@Outamate DS: Keying Process ', async ({ page }) => {
 
 
     // --- GLOBAL RUNTIME MONITORING HOOKS ---
     attachRuntimeMonitors(page);
 
-    await page.goto('/app/internal/assignments/dashboard/order-status');
+    await page.goto('/app/internal/lien-release/dashboard/order-status');
     await page.waitForTimeout(1500);
-    await page.locator('h6[class="module-title"]').nth(1).click();
+    await page.locator('h6[class="module-title"]').nth(2).click();
     await page.waitForTimeout(1500);
     
-        const CustomerOrder = getCustomerOrder();
+      const CustomerOrder = getCustomerOrder();
 
             //Search by Order ID or Customer ID
             await page.locator('input[placeholder="Search by Order ID or Customer ID"]').fill(CustomerOrder);
@@ -115,12 +115,12 @@ test(' Keying Process ', async ({ page }) => {
     const keyingPageUrl = page.url();
    // console.log("Keying Page URL:", keyingPageUrl);
     // Match keying page URL
-    const isKeyingPage =  /\/app\/internal\/assignments\/orders\/\d+\/keying/.test(keyingPageUrl);
+    const isKeyingPage =  /\/app\/internal\/lien-release\/orders\/\d+\/keying/.test(keyingPageUrl);
      const reportBase1 = getSrCounter();
     if (isKeyingPage) {
 
         addResult({
-            product: "AOM",
+            product: "LRP",
             srNo: getSrCounter().toString(),
             module: 'Keying',
             status: 'Pass',
@@ -132,7 +132,7 @@ test(' Keying Process ', async ({ page }) => {
     } else {
 
         addResult({
-            product: "AOM",
+            product: "LRP",
             srNo: getSrCounter().toString(),
             module: 'Keying',
             status: 'Fail',
@@ -145,7 +145,7 @@ test(' Keying Process ', async ({ page }) => {
     //Document Information 
     await page.locator('div[data-section-code="DocumentInformation"]').nth(0).click();
     await page.waitForTimeout(1000);
-    const InstName = await page.locator('span[class="mdc-list-item__primary-text"]').nth(7);
+    const InstName = await page.locator('span[class="mdc-list-item__primary-text"]').nth(4);
     const InstrumentName = await InstName.innerText();
     await InstName.click();
     
@@ -156,12 +156,12 @@ test(' Keying Process ', async ({ page }) => {
     await page.getByLabel('Borrower(s) Name').fill(BorrowerName);
     await page.waitForTimeout(1000);
     //InstrumentDateKeying
-    await page.locator('button[aria-label="Open calendar"]').nth(1).click();
+    await page.locator('button[aria-label="Open calendar"]').nth(2).click();
     await page.waitForTimeout(1000);
     const InstrumentDateKeying = await page.locator('.mat-calendar-body-today').click();
     await page.waitForTimeout(1000);
     //Maturity
-    await page.locator('button[aria-label="Open calendar"]').nth(2).click();
+    await page.locator('button[aria-label="Open calendar"]').nth(3).click();
     await page.waitForTimeout(1000);
     const MaturityDateKeying = await page.locator('.mat-calendar-body-today').click();
     await page.waitForTimeout(1000);
@@ -182,10 +182,10 @@ test(' Keying Process ', async ({ page }) => {
     await page.waitForTimeout(1000);
     await page.locator('span[class="mdc-list-item__primary-text"]').nth(0).click();
     await page.waitForTimeout(1000);
-    // //Trustee Name 
-    // const TrusteeName = faker.person.firstName();
-    // await page.locator('div[data-section-code="DocumentInformation"]').nth(7).fill(TrusteeName);
-    // await page.waitForTimeout(1500);
+    //Trustee Name 
+    const TrusteeName = faker.person.firstName();
+    await page.locator('input[id="trustee_DI110"]').fill(TrusteeName);
+    await page.waitForTimeout(1500);
     //Recorded State
     await page.locator('div[data-field-key="recorded_State_DI"]').click();
     await page.waitForTimeout(1000);
@@ -202,7 +202,7 @@ test(' Keying Process ', async ({ page }) => {
     const RecordedAgency = await page.locator('span[class="mdc-list-item__primary-text"]').nth(1).click();
     await page.waitForTimeout(1500);
     //Recorded Date
-    await page.locator('button[aria-label="Open calendar"]').nth(3).click();
+    await page.locator('button[aria-label="Open calendar"]').nth(4).click();
     await page.waitForTimeout(1500);
     const RecordedDate = await page.locator('.mat-calendar-body-today').click();
     await page.waitForTimeout(1000);
@@ -226,7 +226,7 @@ test(' Keying Process ', async ({ page }) => {
     await page.locator('button[mattooltip="Add"]').nth(2).click();
     await page.waitForTimeout(1000);
     //Instrument Name 
-    await page.locator('div[data-section-code="DocumentInformation"]').nth(19).click();
+    await page.locator('div[data-section-code="DocumentInformation"]').nth(20).click();
     await page.waitForTimeout(1500);
     await page.locator('span[class="mdc-list-item__primary-text"]').nth(0).click();
     await page.waitForTimeout(1500);
@@ -235,7 +235,7 @@ test(' Keying Process ', async ({ page }) => {
     await page.getByLabel('Borrower(s) Name').nth(1).fill(BorrowerName2);
     await page.waitForTimeout(1500);
     //InstrumentDateKeying
-    await page.locator('button[aria-label="Open calendar"]').nth(4).click();
+    await page.locator('button[aria-label="Open calendar"]').nth(5).click();
     await page.waitForTimeout(1500);
     const InstrumentDateKeying2= await page.locator('.mat-calendar-body-today').click();
     await page.waitForTimeout(1000);
@@ -255,7 +255,7 @@ test(' Keying Process ', async ({ page }) => {
     const RecordedAgency2 = await page.locator('span[class="mdc-list-item__primary-text"]').nth(1).click();
     await page.waitForTimeout(1500);
     //Recorded Date
-    await page.locator('button[aria-label="Open calendar"]').nth(5).click();
+    await page.locator('button[aria-label="Open calendar"]').nth(6).click();
     await page.waitForTimeout(1500);
     const RecordedDate2 = await page.locator('.mat-calendar-body-today').click();
     await page.waitForTimeout(1000);
@@ -300,7 +300,7 @@ test(' Keying Process ', async ({ page }) => {
     await page.waitForTimeout(1000);
 
     //Recording Category
-    await page.locator('div[data-field-key="recording_Type_RC"]').click();
+    await page.locator('div[data-field-key="recording_type_RC_LRP"]').click();
     await page.waitForTimeout(1000);
     await page.locator('span[class="mdc-list-item__primary-text"]').nth(0).click();
     await page.waitForTimeout(1000);
@@ -342,14 +342,19 @@ test(' Keying Process ', async ({ page }) => {
     await page.locator('input[id="min_Number_DI"]').fill(MINNumber);
     await page.waitForTimeout(1000);
 
+    //Trustee info
+    await page.locator('[class="mat-mdc-radio-button mat-accent mat-mdc-radio-checked"]').click();
+    await page.waitForTimeout(1000);
+    await page.locator('span[class="mdc-button__label"]').nth(11).click();
+
     //Bene 
     await page.locator('button[mattooltip="Beneficiary Search"]').click();
     await page.waitForTimeout(1000);
     //Bene Assignor
-    await page.locator('input[placeholder="Assignor"]').fill('S');
+    await page.locator('input[placeholder="Beneficiary"]').fill('S');
     //Search 
     await page.locator('span[class="mat-mdc-button-persistent-ripple mdc-button__ripple"]').nth(5).click();
-    await page.locator('div[class="mdc-radio"]').click();
+    await page.locator('div[class="mdc-radio"]').nth(2).click();
     await page.waitForTimeout(1000);
     //Submit
     await page.locator('button:has-text(" Submit ")').click();
@@ -366,10 +371,10 @@ test(' Keying Process ', async ({ page }) => {
     await page.locator('span[class="title"]').nth(4).click();
     await page.waitForTimeout(1500);  
     //Qc order grid 
-    await page.locator('a[href="/app/internal/assignments/quality-control/quality-check"]').click();
+    await page.locator('a[href="/app/internal/lien-release/quality-control/quality-check"]').click();
     await page.waitForTimeout(1500);  
     //Search with Customer Order Number
-    await page.locator('input[placeholder="Search keyword"]').fill(CustomerOrder);
+    await page.locator('input[placeholder="Search keyword"]').fill(CustomerOrder);                          
     await page.waitForTimeout(1500);  
     await page.locator('div[col-id="id"]').nth(1).click(); 
     await page.waitForTimeout(1500); 
@@ -436,14 +441,14 @@ test(' Keying Process ', async ({ page }) => {
     //Instrument Name 
     await page.locator('div[data-field-key="instrument_Name_DI"]').nth(2).click();
     await page.waitForTimeout(1500);
-    await page.locator('span[class="mdc-list-item__primary-text"]').nth(4).click();
+    await page.locator('span[class="mdc-list-item__primary-text"]').nth(3).click();
     await page.waitForTimeout(1500);
     //BorrowerName
     const BorrowerName3 = faker.person.firstName();
     await page.getByLabel('Borrower(s) Name').nth(2).fill(BorrowerName3);
     await page.waitForTimeout(1500);
     //InstrumentDateKeying
-    await page.locator('button[aria-label="Open calendar"]').nth(8).click();
+    await page.locator('button[aria-label="Open calendar"]').nth(9).click();
     await page.waitForTimeout(1500);
     const InstrumentDateKeying3= await page.locator('.mat-calendar-body-today').click();
     await page.waitForTimeout(1000);
@@ -465,10 +470,10 @@ test(' Keying Process ', async ({ page }) => {
     await page.waitForTimeout(1000);
     await page.locator('span[class="mdc-list-item__primary-text"]').nth(0).click();
     await page.waitForTimeout(1000);
-    //Trustee Name 
-    const TrusteeName3 = faker.person.firstName();
-    await page.locator('input[id="trustee_DI310"]').fill(TrusteeName3);
-    await page.waitForTimeout(1500);
+    // //Trustee Name 
+    // const TrusteeName3 = faker.person.firstName();
+    // await page.locator('input[id="trustee_DI310"]').fill(TrusteeName3);
+    // await page.waitForTimeout(1500);
     //images 3
     await page.locator('div[class="col-sm-4 form-field"]').nth(4).click();
     await page.waitForTimeout(1000);
@@ -514,12 +519,12 @@ test(' Keying Process ', async ({ page }) => {
 
     // Match documents page URL
     const isDocumentsPage =
-        /\/app\/internal\/assignments\/orders\/\d+\/documents/.test(documentsPageUrl);
+        /\/app\/internal\/lien-release\/orders\/\d+\/documents/.test(documentsPageUrl);
 
     if (isDocumentsPage) {
 
         addResult({
-            product: "AOM",
+            product: "LRP",
             srNo: `${reportBase1}.1`,
             module: 'Keying Document - Verification',
             status: 'Pass',
@@ -531,7 +536,7 @@ test(' Keying Process ', async ({ page }) => {
     } else {
 
         addResult({
-            product: "AOM",
+            product: "LRP",
             srNo: `${reportBase1}.1`,
             module: 'Keying Document - Verification',
             status: 'Fail',
@@ -540,6 +545,34 @@ test(' Keying Process ', async ({ page }) => {
 
         console.log("❌ DocGen validation failed.");
     }
+
+    //Mandatory Days hold
+    await page.locator('span[class="title"]').nth(8).click();    
+    await page.waitForTimeout(1500);
+    await page.locator('a[href="/app/internal/lien-release/customer-support/mandatory-days-hold"]').click();
+    //Search with Customer Order Number
+    await page.locator('input[placeholder="Search keyword"]').fill(CustomerOrder);
+    await page.waitForTimeout(1500);  
+
+     //Action menu
+    await page.locator('button[aria-label="Actions"]').click();
+    await page.waitForTimeout(1000);
+    //Complete Batch : Bypass Hold
+    await page.locator('span[class="mat-mdc-menu-item-text"]').nth(0).click();
+    await page.waitForTimeout(1000);
+    //Notes 
+    await page.locator('textarea[formcontrolname="note"]').fill('Bypass Hold');
+    await page.locator('button:has-text(" Submit ")').click();
+    await page.waitForTimeout(1500);
+
+    //Search by Order ID or Customer ID
+    await page.locator('input[placeholder="Search by Order ID or Customer ID"]').fill(CustomerOrder);
+    await page.waitForTimeout(1500);  
+    await page.keyboard.press('Enter');
+    await page.locator('div[col-id="orderId"]').nth(1).click(); 
+    await page.waitForTimeout(1500); 
+
+
 
      console.log("");
     console.log("\x1b[1mKeying Details Verification:\x1b[0m"); 
@@ -553,7 +586,16 @@ test(' Keying Process ', async ({ page }) => {
         const match = val.match(/FOR\s(.+?)\s*,/i);
         return match ? match[1].trim() : val;
     };
-    const normalize = (val: any) => typeof val === "number"? Number(val).toFixed(2): String(val ?? "").replace(/\s+/g, " ") .replace(/&amp;/g, "&") .trim() .toLowerCase();
+//const normalize = (val: any) => typeof val === "number"? Number(val).toFixed(2): String(val ?? "").replace(/\s+/g, " ") .replace(/&amp;/g, "&") .trim() .toLowerCase();
+
+//New added
+        const normalize = (val: any) =>
+    typeof val === "number"? Number(val).toFixed(2)  : !isNaN(Number(String(val ?? "").replace(/[$,]/g, "").trim()))   ? Number(String(val ?? "").replace(/[$,]/g, "").trim()).toFixed(2)
+            : String(val ?? "")
+                  .replace(/\s+/g, " ")
+                  .replace(/&amp;/g, "&")
+                  .trim()
+                  .toLowerCase();
 
     const Keying_Client = (await page.locator('#clientId .mat-mdc-select-value-text .mat-mdc-select-min-line').textContent())?.trim() || '';
     const Keying_LoanNumber =await page.$eval('#loan_Number', el => (el as HTMLInputElement).value);
@@ -614,7 +656,7 @@ test(' Keying Process ', async ({ page }) => {
           const verificationUrl = await page.url();
           const clickableVer = '<a href="' + verificationUrl + '" target="_blank">Keying Details</a>';
           addResult({
-            product: "AOM",
+            product: "LRP",
             srNo: `${reportBase1}.2`,
             module: 'Keying Details - Verification',
             status: 'Pass',
@@ -627,7 +669,7 @@ test(' Keying Process ', async ({ page }) => {
         const failedVerificationUrl = await page.url();
         const clickableVer = '<a href="' + failedVerificationUrl + '" target="_blank">Keying Details</a>';
         addResult({
-            product: "AOM",
+            product: "LRP",
           srNo: `${reportBase1}.2`,
           module: 'Keying Details - Verification ',
           status: 'Fail',
@@ -635,7 +677,383 @@ test(' Keying Process ', async ({ page }) => {
   });
     }
 incrementSrCounter();
+        
+    //Search by Order ID or Customer ID
+            await page.locator('input[placeholder="Search by Order ID or Customer ID"]').fill(CustomerOrder);
+            await page.waitForTimeout(1500);  
+            await page.keyboard.press('Enter');
+            await page.locator('div[col-id="orderId"]').nth(1).click(); 
+            await page.waitForTimeout(1500);
 
+ 
+            
+        console.log('');
+        console.log('\x1b[1mPOST RECORDING KEYING :\x1b[0m');
+    
+
+    //Process Order - Keying
+    await page.locator('button[mattooltip="Process Order"]').click();
+    await page.waitForTimeout(1500);
+    await page.locator('button[aria-haspopup="menu"]').click();
+    await page.locator('button:has-text("  POST RECORDING KEYING  ")').click();
+    await page.waitForTimeout(1500);
+
+
+    // VERIFICATION PLACE 2: QC COMPLETED -> POST RECORDING KEYING
+    await page.locator('button[mattooltip="History"]').click();
+     await page.waitForSelector('.ag-center-cols-container');
+
+   // Assert that the QC COMPLETED -> POST RECORDING KEYING entry exists
+   try{
+   await expect(
+     page.locator('.ag-center-cols-container div[role="row"]')
+       .filter({ has: page.locator('[col-id="field"]', { hasText: 'Order Status' }) })
+       .filter({ has: page.locator('[col-id="previousValue"]', { hasText: /^QC COMPLETED$/ }) })
+       .filter({ has: page.locator('[col-id="newValue"]', { hasText: /^POST RECORDING KEYING$/ }) }) ).toBeVisible();
+
+        console.log("✅ Verified History: QC COMPLETED -> POST RECORDING KEYING");
+
+    } catch (error) {
+
+        console.log("❌ Failed History: QC COMPLETED -> POST RECORDING KEYING transition not found.");
+        // Throws a normal Playwright failure to halt the test without calling addResult()
+        throw new Error("History Validation Failed: QC COMPLETED -> POST RECORDING KEYING transition not found.");
+    }
+
+    // Close the history modal to finish the test case safely
+    await page.locator('i[class="ri-close-fill"]').click();
+    await page.waitForTimeout(1500);
+
+    // Keying tab
+    await page.getByRole('link', { name: 'keyboard Keying' }).click();
+    await page.waitForTimeout(1500);     
+
+
+        // Keying Page Validation
+    const PRPageUrl = page.url();
+  // console.log("Post Recording Information:", PRPageUrl);
+    // Match keying page URL
+    const isKeyingPagePR =  /\/app\/internal\/lien-release\/orders\/\d+\/keying/.test(PRPageUrl);
+     const reportBase2 = getSrCounter();
+    if (isKeyingPagePR) {
+
+        addResult({
+            product: "LRP",
+            srNo: getSrCounter().toString(),
+            module: 'Post Recording Information',
+            status: 'Pass',
+            URL: `<a href="${PRPageUrl}">Post Recording Information</a>`
+        });
+
+        console.log("✅ Post Recording Information page opened successfully.");
+
+    } else {
+
+        addResult({
+            product: "LRP",
+            srNo: getSrCounter().toString(),
+            module: 'Post Recording Information',
+            status: 'Fail',
+            URL: `<a href="${PRPageUrl}">Post Recording Information</a>`
+        });
+
+        console.log("❌ Post Recording Information page validation failed.");
+    }
+
+    //Instrument Name
+    await page.locator('div[data-field-key="instrument_Name_PR"]').click();
+    await page.waitForTimeout(500);
+    const InstNamePR = await page.locator('span[class="mdc-list-item__primary-text"]').nth(3);
+    const PRI_InstrumentName = await InstNamePR.innerText();
+    await InstNamePR.click();
+
+    //BorrowerName
+    const BorrowerNamePR = faker.person.firstName();
+    await page.getByLabel('Borrower(s) Name').fill(BorrowerNamePR);
+    await page.waitForTimeout(1000);
+
+    //InstrumentDateKeying
+    await page.locator('button[aria-label="Open calendar"]').nth(0).click();
+    await page.waitForTimeout(1000);
+    const today = new Date();
+    const InstrumentDatePR = `${today.getMonth() + 1}/${today.getDate()}/${today.getFullYear()}`; // Formats exactly to "7/7/2026"
+    await page.locator('.mat-calendar-body-today').click();
+    await page.waitForTimeout(1000);
+            
+    //Consideration Amount
+    const ConsiderationNumberPR = faker.finance.amount({ min: 1000, max: 10000, dec: 2 }).toString();
+    await page.getByLabel('Consideration Amount').fill(ConsiderationNumberPR);
+    await page.waitForTimeout(1000);
+
+    //Original Lender
+    const OriginalLenderPR = faker.person.firstName();
+    await page.locator('input[id="original_Lender_PR"]').fill(OriginalLenderPR);
+    await page.waitForTimeout(1000);
+
+    //Beneficiary Name
+    const BeneficiaryNamePR = faker.person.firstName();
+    await page.locator('input[id="beneficiary_PR"]').fill(BeneficiaryNamePR);
+    await page.waitForTimeout(1000);
+    
+    //Beneficial Address
+    const BeneficialAddressPR = faker.location.streetAddress();
+    await page.locator('input[id="beneficiary_Address_PR"]').fill(BeneficialAddressPR);
+    await page.waitForTimeout(1000);
+
+    //Siging Line
+    const SigingLinePR = faker.location.streetAddress();
+    await page.locator('input[id="siging_Line_PR"]').fill(SigingLinePR);
+    await page.waitForTimeout(1000);
+
+    //Trustee Name
+    const TrusteeNamePR = faker.person.firstName();
+    await page.locator('input[id="trustee_PR"]').fill(TrusteeNamePR);
+    await page.waitForTimeout(1000);
+
+    //Save 
+    await page.locator('button[mattooltip="Save"]').click();
+    await page.waitForTimeout(1000);
+    //Complete 
+    await page.locator('button[mattooltip="Complete"]').click();
+    await page.waitForTimeout(1000);
+
+        console.log('');
+        console.log('\x1b[1mPOST RECORDING QUALITY CHECK :\x1b[0m');
+
+
+     await page.waitForTimeout(1500);
+
+    //Search by Order ID or Customer ID
+    await page.locator('input[placeholder="Search by Order ID or Customer ID"]').fill(CustomerOrder);
+    await page.waitForTimeout(1500);  
+    await page.keyboard.press('Enter');
+    await page.locator('div[col-id="orderId"]').nth(1).click(); 
+    await page.waitForTimeout(1500);
+
+    // VERIFICATION PLACE 2: POST RECORDING KEYING -> POST RECORDING QUALITY CHECK
+    await page.locator('button[mattooltip="History"]').click();
+     await page.waitForSelector('.ag-center-cols-container');
+
+   // Assert that the POST RECORDING KEYING -> POST RECORDING QUALITY CHECK entry exists
+   try{
+   await expect(
+     page.locator('.ag-center-cols-container div[role="row"]')
+       .filter({ has: page.locator('[col-id="field"]', { hasText: 'Order Status' }) })
+       .filter({ has: page.locator('[col-id="previousValue"]', { hasText: /^POST RECORDING KEYING$/ }) })
+       .filter({ has: page.locator('[col-id="newValue"]', { hasText: /^POST RECORDING QUALITY CHECK$/ }) }) ).toBeVisible();
+
+        console.log("✅ Verified History: POST RECORDING KEYING -> POST RECORDING QUALITY CHECK");
+
+    } catch (error) {
+
+        console.log("❌ Failed History: POST RECORDING KEYING -> POST RECORDING QUALITY CHECK transition not found.");
+        // Throws a normal Playwright failure to halt the test without calling addResult()
+        throw new Error("History Validation Failed: POST RECORDING KEYING -> POST RECORDING QUALITY CHECK transition not found.");
+    }
+
+    // Close the history modal to finish the test case safely
+    await page.locator('i[class="ri-close-fill"]').click();
+    await page.waitForTimeout(1500);
+
+
+    // Keying tab
+    await page.getByRole('link', { name: 'keyboard Keying' }).click();
+    await page.waitForTimeout(1500);  
+
+    //Recorded State
+    await page.locator('div[data-field-key="recorded_State_PR"]').click();
+    await page.waitForTimeout(1000);
+    const RdStatePR = await page.locator('span[class="mdc-list-item__primary-text"]').nth(0);
+    const RecordedStatePR = await RdStatePR.innerText();
+    await RdStatePR.click();
+    await page.waitForTimeout(1000);
+    //Recorded County 
+    await page.locator('div[data-field-key="recorded_County_PR"]').click();
+    await page.waitForTimeout(1000);
+    const CountyPR = await page.locator('span[class="mdc-list-item__primary-text"]').nth(4);
+    const RecordedCountyPR = await CountyPR.innerText();
+    await CountyPR.click();
+    await page.waitForTimeout(1000);
+    //Recorded Agency
+    await page.locator('div[data-field-key="recorded_Agency_PR"]').click(); 
+    await page.waitForTimeout(1500);
+    const AgencyPR = await page.locator('span[class="mdc-list-item__primary-text"]').nth(1);
+    const RecordedAgencyPR = await AgencyPR.innerText();
+    await AgencyPR.click();
+    await page.waitForTimeout(1500);
+    //Recorded Date
+    await page.locator('button[aria-label="Open calendar"]').nth(1).click();
+    await page.waitForTimeout(1500);
+    const todayRec = new Date();
+    const RecordedDatePR = `${todayRec.getMonth() + 1}/${todayRec.getDate()}/${todayRec.getFullYear()}`; // Formats exactly to "7/7/2026"
+    await page.locator('.mat-calendar-body-today').click();
+    await page.waitForTimeout(1000);
+    //Recorded Book
+    const RecordedBookPR = faker.number.int({ min: 100000, max: 999999 }).toString();
+    await page.locator('input[id="recorded_Book_PR"]').fill(RecordedBookPR);
+    await page.waitForTimeout(1000);
+    //Recorded Page
+    const RecordedPagePR = faker.number.int({ min: 100000, max: 999999 }).toString();
+    await page.locator('input[id="recorded_Page_PR"]').fill(RecordedPagePR);
+    await page.waitForTimeout(1000);
+
+    //Save 
+    await page.locator('button[mattooltip="Save"]').click();
+    await page.waitForTimeout(1000);
+    //Complete 
+    await page.locator('button[mattooltip="Complete"]').click();
+    await page.waitForTimeout(1000);
+
+    //Order Stage
+    await page.locator('span[class="title"]').nth(3).click();
+    await page.waitForTimeout(1500);  
+    //Pending Delivery
+    await page.locator('a[href="/app/internal/lien-release/order-stage/pending-delivery"]').click();
+    await page.waitForTimeout(1000);
+    //Search with Customer Order Number
+    await page.locator('input[placeholder="Search keyword"]').fill(CustomerOrder);
+    await page.waitForTimeout(1500);  
+    await page.locator('div[col-id="id"]').nth(1).click(); 
+    await page.waitForTimeout(1500); 
+
+    //Verify History for POST RECORDING QUALITY CHECK 
+      console.log("");
+    console.log("\x1b[1mPost Recording Verification:\x1b[0m"); 
+    await page.reload();
+
+    //Process Order - Post Recording Keying QC  
+    await page.locator('button[mattooltip="Process Order"]').click();
+    await page.waitForTimeout(1500);
+    await page.locator('button[aria-haspopup="menu"]').click();
+    await page.locator('button:has-text("   POST RECORDING QUALITY CHECK   ")').click();
+    await page.waitForTimeout(1500);
+    
+    await page.getByRole('link', { name: 'keyboard Keying' }).click();
+    await page.waitForTimeout(1500); 
+
+
+
+
+    const PR_InstrumentName = (await page.locator('#instrument_Name_PR .mat-mdc-select-value-text .mat-mdc-select-min-line').textContent())?.trim() || '';
+    const PR_instrumentDate = await page.$eval('#instrument_Date_PR', el => (el as HTMLInputElement).value);
+    const PR_BorrowersName = await page.$eval('#borrower_PR', el => (el as HTMLInputElement).value);
+    const PR_ConsiderationAmount = await page.$eval('#consideration_Amount_PR', el => (el as HTMLInputElement).value);
+    const PR_OL = await page.$eval('#original_Lender_PR', el => (el as HTMLInputElement).value);
+    const PR_Beneficiary = await page.$eval('#beneficiary_PR', el => (el as HTMLInputElement).value);
+    const PR_BeneficiaryAddress = await page.$eval('#beneficiary_Address_PR', el => (el as HTMLInputElement).value);
+    const PR_SigingLine = await page.$eval('#siging_Line_PR', el => (el as HTMLInputElement).value);
+    const PR_Trustee = await page.$eval('#trustee_PR', el => (el as HTMLInputElement).value);
+    const PR_RecordedState = (await page.locator('#recorded_State_PR .mat-mdc-select-value-text .mat-mdc-select-min-line').textContent())?.trim() || '';
+    const PR_RecordedCounty = (await page.locator('#recorded_County_PR .mat-mdc-select-value-text .mat-mdc-select-min-line').textContent())?.trim() || '';
+    const PR_RecordedAgency = (await page.locator('#recorded_Agency_PR .mat-mdc-select-value-text .mat-mdc-select-min-line').textContent())?.trim() || '';
+    const PR_RecordedDate = await page.$eval('#recorded_Date_PR', el => (el as HTMLInputElement).value);   
+    const PR_RecordedBook = await page.$eval('#recorded_Book_PR', el => (el as HTMLInputElement).value);
+    const PR_RecordedPage = await page.$eval('#recorded_Page_PR', el => (el as HTMLInputElement).value);
+
+      if (
+            normalize(PRI_InstrumentName) === normalize(PR_InstrumentName) &&
+            normalize(BorrowerNamePR) === normalize(PR_BorrowersName) &&
+            normalize(InstrumentDatePR) === normalize(PR_instrumentDate) &&
+            normalize(ConsiderationNumberPR) === normalize(PR_ConsiderationAmount) &&
+            normalize(OriginalLenderPR) === normalize(PR_OL) &&
+            normalize(BeneficiaryNamePR) === normalize(PR_Beneficiary) &&
+            normalize(BeneficialAddressPR) === normalize(PR_BeneficiaryAddress) &&
+            normalize(SigingLinePR) === normalize(PR_SigingLine) &&
+            normalize(TrusteeNamePR) === normalize(PR_Trustee) &&
+            normalize(RecordedStatePR) === normalize(PR_RecordedState) &&
+            normalize(RecordedCountyPR) === normalize(PR_RecordedCounty) &&
+            normalize(RecordedAgencyPR) === normalize(PR_RecordedAgency) &&
+            normalize(RecordedDatePR) === normalize(PR_RecordedDate) &&
+            normalize(RecordedBookPR) === normalize(PR_RecordedBook) &&
+            normalize(RecordedPagePR) === normalize(PR_RecordedPage)
+    ) {
+        console.log("✅ All order fields verified successfully.");
+
+          const verificationUrlPR = await page.url();
+          const clickableVer = '<a href="' + verificationUrlPR + '" target="_blank">Post Recording Information - Verification</a>';
+          addResult({
+            product: "LRP",
+            srNo: `${reportBase2}.1`,
+            module: 'Post Recording Information - Verification',
+            status: 'Pass',
+            URL: clickableVer
+          });
+
+    } else {
+        console.log("❌ Order field verification failed. One or more fields have incorrect or missing values.");
+
+        const failedVerificationUrlPR = await page.url();
+        const clickableVer = '<a href="' + failedVerificationUrlPR + '" target="_blank">Post Recording Information - Verification</a>';
+        addResult({
+            product: "LRP",
+          srNo: `${reportBase2}.1`,
+          module: 'Post Recording Information - Verification',
+          status: 'Fail',
+          URL: clickableVer
+  });
+    }
+   
+   
+
+    //Back to Order level
+    await page.locator('button[mattooltip="Go to Order Details"]').click();
+    await page.waitForTimeout(1500);
+
+    // Navigate to Documents tab
+    await page.locator('a[href*="/documents"]').click();
+
+    //DocGen Verification
+   const docSelectorPR = page.locator('a.name-link', { hasText: 'Good Bye Letter' });
+
+    try {
+        await expect(docSelectorPR).toBeVisible(); 
+        console.log('✅ DocGen PDF created successfully. Good Bye Letter was found.');
+    } catch (error) {
+        console.error('❌ DocGen PDF creation failed. Good Bye Letter was not found.');
+    }
+
+     // Documents Page Validation
+    const documentsPRPageUrl = page.url();
+
+    // console.log("Documents Page URL:", documentsPageUrl);
+
+    // Match documents page URL
+    const isDocumentsPagePR =   /\/app\/internal\/lien-release\/orders\/\d+\/documents/.test(documentsPRPageUrl);
+
+    if (isDocumentsPagePR) {
+
+        addResult({
+            product: "LRP",
+            srNo: `${reportBase2}.2`,
+            module: 'Post Recording Information - Good Bye Letter',
+            status: 'Pass',
+            URL: `<a href="${documentsPRPageUrl}">Post Recording Information - Good Bye Letter</a>`
+        });
+
+        console.log("✅ DocGen successfully.");
+
+    } else {
+
+        addResult({
+            product: "LRP",
+            srNo: `${reportBase2}.2`,
+            module: 'Post Recording Information - Good Bye Letter',
+            status: 'Fail',
+            URL: `<a href="${documentsPRPageUrl}">Post Recording Information - Good Bye Letter</a>`
+        });
+
+        console.log("❌ DocGen validation failed.");
+    }
+   incrementSrCounter();
+   
+    //Process Order - QC Completed
+    await page.locator('button[mattooltip="Process Order"]').click();
+    await page.waitForTimeout(1500);
+    await page.locator('button:has-text("Move to...")').click();
+    await page.locator('button:has-text("   QC COMPLETED   ")').click();
+    await page.waitForTimeout(1500);
+
+    
     console.log("");
     console.log("\x1b[1mCreate Batch:\x1b[0m");  
 
@@ -643,10 +1061,10 @@ incrementSrCounter();
     await page.locator('span[class="title"]').nth(5).click();
     await page.waitForTimeout(1500);  
     //Create Batch
-    await page.locator('a[href="/app/internal/assignments/batching/batches"]').click();
+    await page.locator('a[href="/app/internal/lien-release/batching/batches"]').click();
     await page.waitForTimeout(1500);
     //Search for Order
-    await page.locator('input[placeholder="Search keyword"]').fill( CustomerOrder);
+    await page.locator('input[placeholder="Search keyword"]').fill(CustomerOrder);
     await page.waitForTimeout(1500);    
     //Order selected
     await page.locator('div.ag-selection-checkbox input[type="checkbox"]').click(); 
@@ -656,38 +1074,42 @@ incrementSrCounter();
     await page.locator('span[class="badge text-outline-success"]').click();
     //Signor 1
     await page.locator('div[class="mat-mdc-form-field-flex"]').nth(2).click();
-    await page.locator('span[class="mdc-list-item__primary-text"]').nth(1).click();
+    await page.locator('span[class="mdc-list-item__primary-text"]').nth(0).click();
     await page.waitForTimeout(1500);
     //Signor 2
     await page.locator('div[class="mat-mdc-form-field-flex"]').nth(3).click();
-    await page.locator('span[class="mdc-list-item__primary-text"]').nth(1).click();
+    await page.locator('span[class="mdc-list-item__primary-text"]').nth(0).click();
     await page.waitForTimeout(1500);
     //Witness 1
     await page.locator('div[class="mat-mdc-form-field-flex"]').nth(4).click();
-    await page.locator('span[class="mdc-list-item__primary-text"]').nth(1).click();
+    await page.locator('span[class="mdc-list-item__primary-text"]').nth(0).click();
     await page.waitForTimeout(1500);
     //Witness 2
     await page.locator('div[class="mat-mdc-form-field-flex"]').nth(5).click();
-    await page.locator('span[class="mdc-list-item__primary-text"]').nth(1).click();
+    await page.locator('span[class="mdc-list-item__primary-text"]').nth(0).click();
     await page.waitForTimeout(1500);
     //Notary 1
     await page.locator('div[class="mat-mdc-form-field-flex"]').nth(6).click();
-    await page.locator('span[class="mdc-list-item__primary-text"]').nth(1).click();
+    await page.locator('span[class="mdc-list-item__primary-text"]').nth(0).click();
     await page.waitForTimeout(1500);
     //Notary 2
     await page.locator('div[class="mat-mdc-form-field-flex"]').nth(7).click();
-    await page.locator('span[class="mdc-list-item__primary-text"]').nth(1).click();
+    await page.locator('span[class="mdc-list-item__primary-text"]').nth(0).click();
     await page.waitForTimeout(1500);
     //Preparer
     await page.locator('div[class="mat-mdc-form-field-flex"]').nth(8).click();
-    await page.locator('span[class="mdc-list-item__primary-text"]').nth(1).click();
+    await page.locator('span[class="mdc-list-item__primary-text"]').nth(0).click();
     await page.waitForTimeout(1500);
-    //Return To
+    //ST
     await page.locator('div[class="mat-mdc-form-field-flex"]').nth(9).click();
     await page.locator('span[class="mdc-list-item__primary-text"]').nth(1).click();
     await page.waitForTimeout(1500);
-    //Notary block
+    //Return To
     await page.locator('div[class="mat-mdc-form-field-flex"]').nth(10).click();
+    await page.locator('span[class="mdc-list-item__primary-text"]').nth(0).click();
+    await page.waitForTimeout(1500);
+    //Notary block
+    await page.locator('div[class="mat-mdc-form-field-flex"]').nth(11).click();
     await page.locator('span[class="mdc-list-item__primary-text"]').nth(0).click();
     await page.waitForTimeout(1500);
     //Submit
@@ -750,7 +1172,7 @@ incrementSrCounter();
 
         const statusText = (await generationStatus.textContent())?.trim();
         console.log(`✅ Batch Status: ${statusText}`);
-
+        
         if (statusText?.includes('Generation Completed'))
         {
            // console.log('Proceeding to next step...'); 
@@ -774,8 +1196,7 @@ incrementSrCounter();
             const batchName: string = match[0];
             console.log(`✅ Batch created successfully: ${batchName}`);
 
-                        
-            const GenerationedUrl = await page.url();
+                const GenerationedUrl = await page.url();
 
             // Extract batch ID (304)
             const batchIdMatch = GenerationedUrl.match(/batching\/(\d+)\/batch-details/);
@@ -790,17 +1211,17 @@ incrementSrCounter();
             const clickableVer = `<a href="${GenerationedUrl}" target="_blank">Create Batch : Generation Completed</a>`;
            
         addResult({
-            product: "AOM",
+            product: "LRP",
             srNo: getSrCounter().toString(),
             module: 'Create Batch : Generation Completed',
             status: statusText?.includes('Generation Completed') ? 'Pass' : 'Fail',
             URL: clickableVer
         });
-        incrementSrCounter();
 
         if (statusText?.includes('Generation Failed')) {
             throw new Error(`Batch Generation Failed for Batch ID ${batchId}`);
         }
+        incrementSrCounter();
 
 
             // Go to grid
@@ -832,12 +1253,68 @@ incrementSrCounter();
                 await page.locator('i[class="ri-close-fill"]').click();
                 await page.waitForTimeout(1500);
 
+         //Search by Order ID or Customer ID
+        await page.locator('input[placeholder="Search by Order ID or Customer ID"]').fill(CustomerOrder);
+        await page.waitForTimeout(1500);  
+        await page.keyboard.press('Enter');
+        await page.locator('div[col-id="orderId"]').nth(1).click(); 
+        await page.waitForTimeout(1500);  
+            
+          // Navigate to Documents tab
+        await page.locator('a[href*="/documents"]').click();
+
+        //DocGen Verification
+      const docSelectorUBN = page.locator('a.name-link', { hasText: 'Unrecorded Borrower Notification Letter' });
+
+        try {
+            await expect(docSelectorUBN).toBeVisible(); 
+            console.log('✅ DocGen PDF created successfully. Unrecorded Borrower Notification Letter was found.');
+        } catch (error) {
+            console.error('❌ DocGen PDF creation failed. Unrecorded Borrower Notification Letter was not found.');
+        } 
+
+             // Documents Page Validation
+    const PRQPageUrl = page.url();
+
+    // console.log("Documents Page URL:", documentsPageUrl);
+
+    // Match documents page URL
+    const isDocumentsPagePRQ =
+        /\/app\/internal\/lien-release\/orders\/\d+\/documents/.test(PRQPageUrl);
+
+    if (isDocumentsPagePRQ) {
+
+        addResult({
+            product: "LRP",
+            srNo: getSrCounter().toString(),
+            module: 'Post Recording Information - Unrecorded Borrower Notification Letter',
+            status: 'Pass',
+            URL: `<a href="${PRQPageUrl}">Post Recording Information - Unrecorded Borrower Notification Letter</a>`
+        });
+
+        console.log("✅ DocGen successfully.");
+
+    } else {
+
+        addResult({
+            product: "LRP",
+            srNo: getSrCounter().toString(),
+            module: 'Post Recording Information - Unrecorded Borrower Notification Letter',
+            status: 'Fail',
+            URL: `<a href="${PRQPageUrl}">Post Recording Information - Unrecorded Borrower Notification Letter</a>`
+        });
+
+        console.log("❌ DocGen validation failed.");
+    }
+    incrementSrCounter();
+
             console.log("");
             console.log("\x1b[1mPrinting:\x1b[0m"); 
+
             // //Batching 
             // await page.locator('span[class="title"]').nth(5).click();
-            // await page.waitForTimeout(1500);   
-            //Back to pritning page
+            // await page.waitForTimeout(1500);  
+     
             await page.locator('a[href*="/printing"]').click();
             await page.waitForTimeout(1500);    
 
@@ -867,6 +1344,7 @@ incrementSrCounter();
 
             // Open history modal
             await page.locator('button[mattooltip="History"]').click();
+
             await page.waitForSelector('.ag-center-cols-container');
             // Verify SIGNING PREPARATION -> SENT FOR SIGNING
             await expect(
@@ -881,7 +1359,7 @@ incrementSrCounter();
             // Close history modal
             await page.locator('i[class="ri-close-fill"]').click();
             await page.waitForTimeout(1500);
-
+            
             //Documents
             await page.locator('a[href*="/documents"]').click();
             await page.waitForTimeout(1500);
@@ -899,7 +1377,7 @@ incrementSrCounter();
             console.log('✅ DocGen PDF created successfully. Generated Document.');
 
             addResult({
-                product: "AOM",
+                product: "LRP",
                 srNo: getSrCounter().toString(),
                 module: 'Generated Document Verification',
                 status: 'Pass',
@@ -911,7 +1389,7 @@ incrementSrCounter();
             console.log('❌ DocGen PDF creation failed. Generated Document not found.');
 
             addResult({
-                product: "AOM",
+                product: "LRP",
                 srNo: getSrCounter().toString(),
                 module: 'Generated Document Verification',
                 status: 'Fail',
@@ -919,79 +1397,9 @@ incrementSrCounter();
             });
             
         }   
+      //  incrementSrCounter();
 
-        
-    //    // DOWNLOAD DOCUMENT
-    //    // Wait for new tab/page
-    //     const [newPage] = await Promise.all([page.context().waitForEvent('page'),   generatedDoc.click() ]);
-    //     // Wait until fully loaded
-    //     await newPage.waitForLoadState();
-    //    // console.log('✅ Document opened in new tab');
-
-    //             const base64Data = await newPage.evaluate(async () => {
-
-    //             const response = await fetch(window.location.href);
-
-    //             const blob = await response.blob();
-
-    //             return await new Promise<string>((resolve, reject) => {
-
-    //                 const reader = new FileReader();
-
-    //                 reader.readAsDataURL(blob);
-
-    //                 reader.onloadend = () => {
-
-    //                     const base64 = reader.result?.toString().split(',')[1];
-
-    //                     resolve(base64 || '');
-    //                 };
-
-    //                 reader.onerror = reject;
-    //             });
-
-    //         });
-
-    //         // CLEAN OLD FILES (SAFE PLACE: AFTER SUCCESS)
-    //         const downloadFolder = 'C:\\DS_playwright-test 1\\Documents';
-    //         const files = fs.readdirSync(downloadFolder);
-
-    //         for (const file of files) {
-    //             if (file.startsWith('GeneratedDocument_') && file.endsWith('.pdf')) {
-    //                 fs.unlinkSync(path.join(downloadFolder, file));
-    //                 console.log(` Deleted old file: ${file}`);
-    //             }
-    //         }
-
-
-    //         // ======================================
-    //         // SAVE PDF LOCALLY
-    //         // ======================================
-
-    //        // const downloadFolder = 'C:\\DS_playwright-test 1\\Documents';
-
-    //         const fileName = `GeneratedDocument_${Date.now()}.pdf`;
-    //         const filePath = path.join(downloadFolder, fileName);
-
-    //         // Convert base64 → buffer
-    //         const pdfBuffer = Buffer.from(base64Data, 'base64');
-
-    //         // Save file
-    //         fs.writeFileSync(filePath, pdfBuffer);
-
-    //       //  console.log(`✅ PDF saved at: ${filePath}`);
-
-    //         await newPage.close();
-    //         await page.bringToFront();
-    //         await page.reload();
-
-
-            // DOWNLOAD DOCUMENT
-       // Headless Chromium has no built-in PDF viewer: clicking the link fires a
-       // "download" event instead of opening a viewable tab. Handle BOTH cases.
-    // ======================================
-            // DOWNLOAD DOCUMENT
-            // ======================================
+     // DOWNLOAD DOCUMENT
             // Re-locate inside this block so it's self-contained and always in scope.
             const generatedDocLink = page.locator('a.name-link', { hasText: 'Generated Document' });
 
@@ -1042,7 +1450,7 @@ incrementSrCounter();
             // ======================================
             // CLEAN OLD FILES (SAFE PLACE: AFTER SUCCESS)
             // ======================================
-            const downloadFolder = 'C:\\DS_playwright-test 1\\Documents';
+            const downloadFolder = 'C:\\DS_playwright-test 1\\LRP_Reports';
             const files = fs.readdirSync(downloadFolder);
 
             for (const file of files) {
@@ -1078,23 +1486,27 @@ incrementSrCounter();
             await page.waitForTimeout(1500);
 
             //Sent For Signing
-            await page.locator('a[href="/app/internal/assignments/batching/sent-for-signing"]').click();
+            await page.locator('a[href="/app/internal/lien-release/batching/sent-for-signing"]').click();
             await page.waitForTimeout(1500);
 
             //Search for Order
             await page.locator('input[placeholder="Search keyword"]').fill(CustomerOrder);
-            await page.waitForTimeout(1500);    
-            // //Order selected : Ingest Signed Documents
-            // await page.locator('div.ag-selection-checkbox input[type="checkbox"]').click(); 
-            // await page.locator('button[mattooltip="Ingest Signed Documents"]').click();
-            // await page.waitForTimeout(1500); 
+            await page.waitForTimeout(1500);  
+
+        //    //Order selected : Ingest Signed Documents
+        //     await page.locator('div.ag-selection-checkbox input[type="checkbox"]').click(); 
+        //     await page.locator('button[mattooltip="Ingest Signed Documents"]').click();
+        //     await page.waitForTimeout(1500); 
+              
+        //     await page.reload();
+        //     await page.reload();
 
             //Action 
             await page.locator('div[col-id="actions"]').nth(1).click();
             await page.locator('span[class="mat-mdc-menu-item-text"]').nth(0).click();
             await page.waitForTimeout(1500);
 
-            //Upload file
+             //Upload file
             await page.locator('input[type="file"]').setInputFiles(filePath);
            // console.log('✅ File uploaded successfully');
             await page.locator('div[class="d-flex footer"]').click();
@@ -1147,7 +1559,7 @@ incrementSrCounter();
             // await page.locator('span[class="title"]').nth(5).click();
             // await page.waitForTimeout(1500);   
             //Received from Signing
-            await page.locator('a[href="/app/internal/assignments/batching/received-from-signing"]').click();
+            await page.locator('a[href="/app/internal/lien-release/batching/received-from-signing"]').click();
             await page.waitForTimeout(1500);
             //Search for Order
             await page.locator('input[placeholder="Search keyword"]').fill( CustomerOrder);
@@ -1189,7 +1601,7 @@ incrementSrCounter();
             //Recordation Monitoring
             await page.locator('span[class="title"]').nth(6).click();
             await page.waitForTimeout(1500); 
-            await page.locator('a[href="/app/internal/assignments/recordation/recordation-monitoring"]').click();
+            await page.locator('a[href="/app/internal/lien-release/recordation/recordation-monitoring"]').click();
             await page.waitForTimeout(1500);
             //Search for Order
             await page.locator('input[placeholder="Search keyword"]').fill( CustomerOrder);
@@ -1225,7 +1637,7 @@ incrementSrCounter();
 
             //Reject Queue
             await page.locator('span[class="title"]').nth(4).click();
-            await page.locator('a[href="/app/internal/assignments/quality-control/rejects"]').click();
+            await page.locator('a[href="/app/internal/lien-release/quality-control/rejects"]').click();
             await page.waitForTimeout(1500);
             //Search for Order
             await page.locator('input[placeholder="Search keyword"]').fill( CustomerOrder);
@@ -1240,12 +1652,15 @@ incrementSrCounter();
             console.log("");
             console.log("\x1b[1mEmail:\x1b[0m"); 
 
+
+
+
 });    
 
-// test.afterAll(async ({}, testInfo) => {
-//     const results = getResults();
-//     const baseURL =
-//         testInfo.project.use.baseURL ||
-//         'https://dev-outamateds.outamationlabs.com/';
-//     await sendMail(results); //await sendMail(results, baseURL); 
-// });
+test.afterAll(async ({}, testInfo) => {
+    const results = getResults();
+    const baseURL =
+        testInfo.project.use.baseURL ||
+        'https://dev-outamateds.outamationlabs.com/';
+    await sendMail(results); //await sendMail(results, baseURL); 
+});

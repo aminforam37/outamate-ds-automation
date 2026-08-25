@@ -47,16 +47,16 @@ async function assertTransition(
     console.log(`✨ Inspected Transition Target Successfully: [${contextName}]`);
 }
 
-//@Outamate DS:
-test(' Order Creation ', async ({ page }) => {
+//
+test('@Outamate DS: Order Creation ', async ({ page }) => {
 
 
     // --- GLOBAL RUNTIME MONITORING HOOKS ---
     attachRuntimeMonitors(page);
 
-    await page.goto('/app/internal/assignments/dashboard/order-status');
+    await page.goto('/app/internal/lien-release/dashboard/order-status');
     await page.waitForTimeout(1500);
-    await page.locator('h6[class="module-title"]').nth(1).click();
+    await page.locator('h6[class="module-title"]').nth(2).click();
     await page.waitForTimeout(1500);
 
     console.log("");
@@ -69,18 +69,17 @@ test(' Order Creation ', async ({ page }) => {
     await page.waitForTimeout(1500);  
 
     //Order Creation
-    await page.locator('a[href="/app/internal/assignments/orders/new"]').click();
+    await page.locator('a[href="/app/internal/lien-release/orders/new"]').click();
     await page.waitForTimeout(1500);
 
    
     const reportBase = getSrCounter();
         const orderUrl = page.url();
 
-        const isOrderCreationPage =
-            /\/app\/internal\/assignments\/orders\/new$/.test(orderUrl);
+        const isOrderCreationPage =  /\/app\/internal\/lien-release\/orders\/new$/.test(orderUrl);
 
         addResult({
-            product: "AOM",
+            product: "LRP",
             srNo: getSrCounter().toString(),
             module: 'Order Creation',
             status: isOrderCreationPage ? 'Pass' : 'Fail',
@@ -97,7 +96,7 @@ test(' Order Creation ', async ({ page }) => {
     await page.waitForTimeout(1500);
     // const CusName = await page.locator('span[class="mdc-list-item__primary-text"]').nth(25);
     // await page.waitForTimeout(1500);
-    const CusName = page.getByText('Test Company', { exact: true });
+    const CusName = page.getByText('Test Company', { exact: true });  //Covius
     await page.waitForTimeout(1500);
     const CustomerName = await CusName.innerText();
     //console.log("Customer Name: ", CustomerName);
@@ -137,7 +136,7 @@ test(' Order Creation ', async ({ page }) => {
     //Product Type
     await page.locator('[aria-haspopup="listbox"]').nth(3).click();
     await page.waitForTimeout(1500);
-    const ProductTypeElement = await page.locator('span[class="mdc-list-item__primary-text"]').nth(1);
+    const ProductTypeElement = await page.locator('span[class="mdc-list-item__primary-text"]').nth(0);
     await page.waitForTimeout(1500);
     const ProductType = await ProductTypeElement.innerText();
     await ProductTypeElement.click();
@@ -161,19 +160,19 @@ test(' Order Creation ', async ({ page }) => {
 
     //Address Line1
     const AddressLine1 = faker.location.streetAddress();
-    await page.locator('input[formcontrolname="line1"]').fill(AddressLine1);
+    await page.locator('input[formcontrolname="line1"]').nth(0).fill(AddressLine1);
     await page.waitForTimeout(1500);
     //console.log("Address Line 1: ", AddressLine1);
 
     //ZipCode
     const Zipcode =  '99501';
-    await page.locator('input[formcontrolname="zip"]').fill(Zipcode);
+    await page.locator('input[formcontrolname="zip"]').nth(0).fill(Zipcode);
     await page.waitForTimeout(1500);
     //console.log("Zip Code: ", Zipcode);
 
     //City
     const City = faker.location.city();
-    await page.locator('input[formcontrolname="city"]').fill(City);
+    await page.locator('input[formcontrolname="city"]').nth(0).fill(City);
     await page.waitForTimeout(1000);
     //console.log("City: ", City);
 
@@ -197,6 +196,10 @@ test(' Order Creation ', async ({ page }) => {
     await page.waitForTimeout(1000);
     //console.log("County: ", County);
     //const County = await page.locator('mat-select[formcontrolname="county"] > div').innerText();
+
+    //Borrower Mailing Address Information 
+    await page.locator('[class="mat-mdc-checkbox ms-3 mat-accent"]').click();
+    await page.waitForTimeout(1500);
 
     //First Name
     const firstName = faker.person.firstName();
@@ -229,22 +232,13 @@ test(' Order Creation ', async ({ page }) => {
     await page.waitForTimeout(1000);
     const InstrumentDate = await page.locator('mat-form-field input[formcontrolname="instrumentDate"]').inputValue();
 
-    // //Assignee
-    // const Assignee = faker.person.fullName();
-    // await page.locator('input[formcontrolname="aomAssignee"]').fill(Assignee);
-    // await page.waitForTimeout(1500);
-
-    // //Assignor
-    // const Assignor = faker.person.fullName();
-    // await page.locator('input[formcontrolname="aomAssignor"]').fill(Assignor);
-    // await page.waitForTimeout(1500);
-
-    //Signing/Vesting
-    const SigningLocator = page.locator('input[formcontrolname="signing"]');
-     await SigningLocator.fill("Signing");
-     await page.waitForTimeout(1500);
-     const Signing = await SigningLocator.inputValue();
-     //console.log("Signing/Vesting: ", Signing);
+    //Paid off Date
+    await page.locator('button[aria-label="Open calendar"]').nth(1).click();
+    await page.waitForTimeout(1500);
+    await page.locator('.mat-calendar-body-today').click();
+    await page.waitForTimeout(1000);
+    const PaidoffDate = await page.locator('mat-form-field input[formcontrolname="paidOffDate"]').inputValue();
+   
     
 
     //Special Instruction
@@ -256,7 +250,7 @@ test(' Order Creation ', async ({ page }) => {
     await page.waitForTimeout(1500);
 
     // Wait for redirect to Order Details page
-    await page.waitForURL(/\/app\/internal\/assignments\/orders\/\d+\/details/);
+    await page.waitForURL(/\/app\/internal\/lien-release\/orders\/\d+\/details/);
 
     const orderDetailsUrl = page.url();
 
@@ -277,10 +271,10 @@ test(' Order Creation ', async ({ page }) => {
     console.log("\x1b[1mOrder Details Verification:\x1b[0m");
 
     //Hold Queue Verification
-    await page.locator('span[class="title"]').nth(7).click();
+    await page.locator('span[class="title"]').nth(8).click();
     await page.waitForTimeout(1500);
     //Hold Queue 
-    await page.locator('a[href="/app/internal/assignments/customer-support/hold"]').click();
+    await page.locator('a[href="/app/internal/lien-release/customer-support/hold"]').click();
     await page.waitForTimeout(1500);  
     //Search with Customer Order Number
     await page.locator('input[placeholder="Search keyword"]').fill(CustomerOrder);
@@ -359,7 +353,7 @@ test(' Order Creation ', async ({ page }) => {
    {
 
     addResult({
-        product: "AOM",
+        product: "LRP",
             srNo: `${reportBase}.1`,
             module: 'Create Order Verification',
             status: 'Pass',
@@ -371,7 +365,7 @@ test(' Order Creation ', async ({ page }) => {
     } else {
 
         addResult({
-            product: "AOM",
+            product: "LRP",
             srNo: `${reportBase}.1`,
             module: 'Create Order Verification',
             status: 'Fail',
@@ -420,7 +414,7 @@ test(' Order Creation ', async ({ page }) => {
             //  console.log("Request Code in Related Orders:", relatedOrder_RequestCode);
             
              addResult({
-            product: "AOM",
+            product: "LRP",
             srNo: `${reportBase}.2`,
             module: 'Related Orders ',
             status: 'Pass',
@@ -432,7 +426,7 @@ test(' Order Creation ', async ({ page }) => {
              const relatedOrdersUrl = page.url();
 
             addResult({
-                product: "AOM",
+                product: "LRP",
                 srNo: `${reportBase}.2`,
                 module: 'Related Orders ',
                 status: 'Fail',
@@ -460,7 +454,7 @@ test(' Order Creation ', async ({ page }) => {
    // console.log("Customer Order in Research:", CustomerOrder_Research);
     const ProductType_Research = (await researchPage.locator('span.d-block.text-body').filter({ hasText: 'Document Retrieval' }).innerText()).trim();
     //console.log("Product Type in Research: ", ProductType_Research);
-    const RequestCode_Research = (await researchPage.locator('span.d-block.text-body').filter({ hasText: 'APR ' }).innerText()).trim();
+    const RequestCode_Research = (await researchPage.locator('span.d-block.text-body').filter({ hasText: 'LRPR ' }).innerText()).trim();
     //console.log("Request Code in Research: ", RequestCode_Research);
 
         //const normalize = (val: string) => val ?.replace(/\s+/g, " ").replace(/&amp;/g, "&") .trim().toLowerCase();
@@ -476,7 +470,7 @@ test(' Order Creation ', async ({ page }) => {
         const ResearchUrl = await researchPage.url();
         const clickableResearch = '<a href="' + ResearchUrl + '" target="_blank">Research Page</a>';
         addResult({
-            product: "AOM",
+            product: "LRP",
             srNo: `${reportBase}.3`,
             module: 'New Research Order',
             status: 'Pass',
@@ -488,7 +482,7 @@ test(' Order Creation ', async ({ page }) => {
         const failedResearchUrl = await researchPage.url();
         const clickableResearch = '<a href="' + failedResearchUrl + '" target="_blank">Research Page</a>';
         addResult({
-            product: "AOM",
+            product: "LRP",
         srNo: `${reportBase}.3`,
         module: 'New Research Order',
         status: 'Fail',
@@ -523,7 +517,7 @@ test(' Order Creation ', async ({ page }) => {
 //     await page.waitForTimeout(1500);
 //     // const CusNameUD = await page.locator('span[class="mdc-list-item__primary-text"]').nth(2);
 //     // await page.waitForTimeout(1500);
-//     const CusNameUD = page.getByText('Covius', { exact: true });
+//     const CusNameUD = page.getByText(' Test Company ', { exact: true });
 //     await page.waitForTimeout(1500);
 //     const CustomerNameEdit = await CusNameUD.innerText();
 //     //console.log("Customer Name: ", CustomerNameEdit);
@@ -560,7 +554,7 @@ test(' Order Creation ', async ({ page }) => {
 //     //Product Type
 //     await page.locator('[aria-haspopup="listbox"]').nth(3).click();
 //     await page.waitForTimeout(1500);
-//     const ProductTypeEdit = await page.locator('span[class="mdc-list-item__primary-text"]').nth(1);
+//     const ProductTypeEdit = await page.locator('span[class="mdc-list-item__primary-text"]').nth(0);
 //     await page.waitForTimeout(1500);
 //     const ProductTypeED = await ProductTypeEdit.innerText();
 //     await ProductTypeEdit.click();
@@ -568,7 +562,7 @@ test(' Order Creation ', async ({ page }) => {
 
 //     //Edit Order - Change Address
 //     const AddressLine1Edit = faker.location.streetAddress();
-//     await page.locator('input[formcontrolname="line1"]').fill(AddressLine1Edit);
+//     await page.locator('input[formcontrolname="line1"]').nth(0).fill(AddressLine1Edit);
 //     await page.waitForTimeout(1500);
 //   //  console.log("Address Line 1: ", AddressLine1Edit);
 
@@ -577,15 +571,15 @@ test(' Order Creation ', async ({ page }) => {
 //     await page.waitForTimeout(1500);
 
 //     // Wait until redirected after save
-//     await page.waitForURL(/\/app\/internal\/assignments\/orders\/\d+\/details/);
+//     await page.waitForURL(/\/app\/internal\/lien-release\/orders\/\d+\/details/);
 //     const editedOrderUrl = page.url();
 //     //console.log("Edited Order URL:", editedOrderUrl);
 
 //     // Validate edit order success
 //     const isOrderEdited =
-//         /\/app\/internal\/assignments\/orders\/\d+\/details/.test(editedOrderUrl);
+//         /\/app\/internal\/lien-release\/orders\/\d+\/details/.test(editedOrderUrl);
 //         addResult({
-//         product: "AOM",
+//             product: "LRP",
 //         srNo: `${reportBase}.4`,
 //         module: 'Edit Order',
 //         status: isOrderEdited ? 'Pass' : 'Fail',
@@ -606,27 +600,25 @@ test(' Order Creation ', async ({ page }) => {
 //     await page.locator('button[mattooltip="History"]').click();
 //     await page.waitForTimeout(1500);
     
-//     const NewvalueCustomer = (await page.getByRole('gridcell', { name: 'Covius' }).innerText()).trim();
+//     const NewvalueCustomer = (await page.getByRole('gridcell', { name: ' Test Company ' }).innerText()).trim();
 //    // console.log("New Customer Name in History: ", NewvalueCustomer);
-//     const NewvalueProjectCode = (await page.getByRole('gridcell', { name: 'AP001' }).innerText()).trim();
+//     const NewvalueProjectCode = (await page.getByRole('gridcell', { name: 'LRP001' }).innerText()).trim();
 //   //  console.log("New Project Code in History: ", NewvalueProjectCode);
-//     const NewvalueDivision = (await page.getByRole('gridcell', { name: 'Batch Division' }).innerText()).trim();
+//     const NewvalueDivision = (await page.getByRole('gridcell', { name: ' OMods ' }).innerText()).trim();
 //  //   console.log("New Division in History: ", NewvalueDivision);
 //     const NewvalueLender = (await page.getByRole('gridcell', { name: 'John Doe' }).innerText()).trim();
 //  //   console.log("New Lender Name in History: ", NewvalueLender);
 //     const NewvalueAddress =  (await page.getByRole('gridcell', { name: AddressLine1Edit }).innerText()).trim();
 //  //   console.log("New Address Line 1 in History: ", NewvalueAddress);
 
-//     const expectedProjectCodeHistory = NewvalueProjectCode.split(" - ")[0].trim();
 
 //     if (NewvalueCustomer === CustomerNameEdit 
-//         && NewvalueProjectCode === expectedProjectCodeHistory
 //         && NewvalueDivision === DivisionEdit
 //         && NewvalueLender === LenderNameEdit    
 //         && NewvalueAddress === AddressLine1Edit
 //         ) {
 //         addResult({
-//             product: "AOM",
+//             product: "LRP",
 //             srNo: `${reportBase}.5`,
 //             module: 'Edit History Verification',
 //             status: 'Pass',
@@ -635,7 +627,7 @@ test(' Order Creation ', async ({ page }) => {
 //         console.log("✅ History details are correct and match the created order.");
 //     } else {            
 //             addResult({
-//             product: "AOM",
+//             product: "LRP",
 //             srNo: `${reportBase}.5`,
 //             module: 'Edit History Verification',
 //             status: 'Fail',
@@ -755,7 +747,7 @@ test(' Order Creation ', async ({ page }) => {
     console.log(`✅ ${toastMessage_documents}`);
 
 
-
+  
 
                 
 });

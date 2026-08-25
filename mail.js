@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer';
 import 'dotenv/config';
 
-export async function sendMail(testResults, baseURL) {
+export async function sendMail(testResults) {
     const transporter = nodemailer.createTransport({
         host: "smtp.office365.com",
         port: 587,
@@ -27,6 +27,16 @@ export async function sendMail(testResults, baseURL) {
     // Check if any module failed
     const hasFailures = testResults.some((result) => result.status === 'Fail');
 
+
+    // Dynamic URLs
+    const baseURLs = {
+        DEV: 'https://dev-outamateds.outamationlabs.com/',
+        UAT: 'https://uat-outamateds.outamationlabs.com/',
+        DEMO : 'https://demo-outamateds.outamationlabs.com/',
+    };
+
+    const baseURL = baseURLs[ENV];
+
      // Dynamic Execution Status
     const executionStatus = hasFailures
         ? 'Failed'
@@ -35,18 +45,46 @@ export async function sendMail(testResults, baseURL) {
     // Dynamic Subject
     const dynamicSubject =  `${projectName} - Playwright Tests - ${ENV} Environment - ${executionStatus}`;
 
-    // Generate dynamic table rows with failure highlighting
-    const tableRows = testResults
-        .map(
-            (result) => `
-                <tr style="color: ${result.status === 'Fail' ? 'red' : 'black'};">
-                    <td style="border: 1px solid #ddd; padding: 8px; text-align: center;"> ${result.srNo}</td>
+    const products = [...new Set(testResults.map(r => r.product))];
+
+    let tableRows = "";
+
+    products.forEach(product => {
+    // Product Heading
+    tableRows += `
+        <tr style="background:#d9edf7;">
+            <td colspan="4" style="border:1px solid #ddd;padding:8px; font-weight:bold; text-align:center;">
+                ${product}
+            </td>
+        </tr>
+    `;
+
+     // Product Modules
+     testResults
+        .filter(r => r.product === product)
+        .forEach(result => {
+            tableRows += `
+                <tr style="color:${result.status === 'Fail' ? 'red' : 'black'};">
+                  <td style="border: 1px solid #ddd; padding: 8px; text-align: center;"> ${result.srNo}</td>
                     <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${result.module}</td>
                     <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${result.status}</td>
                     <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${result.URL}</td>
-                </tr>`
-        )
-        .join('');
+                </tr>
+            `;
+        });
+    });
+    // // Generate dynamic table rows with failure highlighting
+    // const tableRows = testResults
+    //     .map(
+    //         (result) => `
+    //             <tr style="color: ${result.status === 'Fail' ? 'red' : 'black'};">
+    //                 <td style="border: 1px solid #ddd; padding: 8px; text-align: center;"> ${result.srNo}</td>
+    //                 <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${result.module}</td>
+    //                 <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${result.status}</td>
+    //                 <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${result.URL}</td>
+    //             </tr>`
+    //     )
+    //     .join('');
         
     const emailContent = `
         <html>
@@ -78,7 +116,7 @@ export async function sendMail(testResults, baseURL) {
     const mailOptions = {
         from: process.env.EMAIL_USER,
         to: 'foram.amin@outamation.com',
-    //    cc: 'tushar.galiya@outamation.com',
+   //  cc: 'tushar.galiya@outamation.com',
         subject: dynamicSubject,
         // subject: hasFailures
         //     ? 'Failed: DS - Web UI Playwright Automation Flow Result'

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-   "test": "npx playwright test",
+    "test": "npx playwright test",
     "DS": "npx playwright test --grep \"@Outamate DS\""
   },
   "keywords": [],
@@ -13,6 +13,7 @@
   "type": "commonjs",
   "dependencies": {
     "dotenv": "^17.2.0",
+    "exceljs": "^4.4.0",
     "nodemailer": "^7.0.5",
     "playwright": "^1.54.1"
   },

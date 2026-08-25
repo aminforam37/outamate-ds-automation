@@ -15,10 +15,10 @@ let isPassed = true;
 test(' Reports ', async ({ page, baseURL }) => {
     const base = (baseURL ?? '').replace(/\/$/, '');
 
-    await page.goto('/app/internal/assignments/dashboard/order-status');
+    await page.goto('/app/internal/research/dashboard/order-status');
     await page.waitForTimeout(1500);
-    // Navigate to AOM
-    await page.locator('h6[class="module-title"]').nth(1).click();
+    // Navigate to Research
+    await page.locator('h6[class="module-title"]').nth(0).click();
     await page.waitForTimeout(1500);
 
     console.log("");
@@ -27,7 +27,7 @@ test(' Reports ', async ({ page, baseURL }) => {
     const reportBase = getSrCounter(); // Capture current srCounter value for this report module
 
     addResult({
-        product: "AOM",
+        product: "Research",
         srNo: getSrCounter().toString(),
         module: 'Reports',
         status: 'Pass',
@@ -62,7 +62,7 @@ test(' Reports ', async ({ page, baseURL }) => {
     // await page.waitForTimeout(1500);
 
     // Base folder
-    const baseReportsDir = 'C:\\DS_playwright-test 1\\AOM_Reports';
+    const baseReportsDir = 'C:\\DS_playwright-test 1\\Research_Reports';
 
     // Ensure base folder exists
     if (!fs.existsSync(baseReportsDir)) {
@@ -113,7 +113,7 @@ test(' Reports ', async ({ page, baseURL }) => {
     // Save with SAME downloaded file name
     const filePath = path.join(currentRunDir, originalFileName);
 
-    // Save file directly into AOM_Reports folder
+    // Save file directly into Research_Reports folder
     await download.saveAs(filePath);
 
     console.log(`File downloaded successfully: ${originalFileName}`);
@@ -137,6 +137,85 @@ test(' Reports ', async ({ page, baseURL }) => {
 
 
     
+    //Reports 
+    await page.locator('mat-expansion-panel').filter({ hasText: 'Reports' }).click();
+    await page.waitForTimeout(1500);
+    //await page.locator('span[class="title"]').nth(1).click();
+    //await page.waitForTimeout(1500);  
+
+
+    console.log("\x1b[1m2.Invoice Reports:\x1b[0m");
+    // Invoice Report
+    await page.locator('li[class="sidemenu-item ng-star-inserted"]').nth(2).click();
+    await page.waitForTimeout(1500);
+    //Select Customer 
+    await page.locator('div[class="mat-mdc-text-field-wrapper mdc-text-field mdc-text-field--filled"]').nth(0).click();
+    await page.waitForTimeout(1500);
+    await page.locator('span[class="mdc-list-item__primary-text"]').nth(2).click();
+    await page.waitForTimeout(1500);
+    await page.keyboard.press('Escape');
+    //Date Picker
+    await page.locator('div[class="mat-mdc-form-field-icon-suffix ng-star-inserted"]').click();
+    await page.waitForTimeout(1500);
+    await page.locator('button[class="mdc-button mat-mdc-button-base mat-mdc-button mat-unthemed"]').nth(6).click();
+    await page.waitForTimeout(1500);
+    // //Apply Filters
+    // await page.locator('button[class="mdc-button mat-mdc-button-base mdc-button--unelevated mat-mdc-unelevated-button mat-primary ng-star-inserted"]').click();
+    // await page.waitForTimeout(1500);
+
+    //      // Exact folder path
+    //   const reportsDir2 = 'C:\\DS_playwright-test\\AOM_Reports';
+
+  // Wait for download event
+  const downloadPromiseInvoice = page.waitForEvent('download');
+
+  // Click Export button
+  await page.locator('button[aria-label="Export"]').click();
+
+  await page.waitForTimeout(1500);
+
+  // Select Excel option
+  await page.locator('button[role="menuitem"]').nth(0).click();
+
+  // Capture download
+  const downloadInvoice = await downloadPromiseInvoice;
+
+ // Original downloaded file name
+  const originalFileNameInvoice = await downloadInvoice.suggestedFilename();
+
+  // File extension
+  const extensionInvoice = path.extname(originalFileNameInvoice);
+
+  // Validate Excel format
+  expect(['.xlsx', '.xls']).toContain(extensionInvoice);
+
+  // Save with SAME downloaded file name
+  const filePathInvoice = path.join(currentRunDir, originalFileNameInvoice);
+
+  // Save file directly into AOM_Reports folder
+  await downloadInvoice.saveAs(filePathInvoice);
+
+ console.log(`File downloaded successfully: ${originalFileNameInvoice}`);
+
+  // ================= VALIDATIONS =================
+
+  // 1. Validate file exists
+  expect(fs.existsSync(filePathInvoice)).toBeTruthy();
+
+  //console.log('File exists in AOM_Reports folder');
+
+  // 2. Validate correct format
+  expect(['.xlsx']).toContain(extensionInvoice);
+
+  //console.log('Correct Excel format:', extensionInvoice);
+
+  // 3. Validate file not empty/corrupted
+  const statsInvoice = fs.statSync(filePathInvoice);
+
+  expect(statsInvoice.size).toBeGreaterThan(0);
+
+  //console.log('File is not empty/corrupted');
+    
 
     //Reports 
     await page.locator('mat-expansion-panel').filter({ hasText: 'Reports' }).click();
@@ -145,9 +224,9 @@ test(' Reports ', async ({ page, baseURL }) => {
     //await page.waitForTimeout(1500);  
 
 
-    console.log("\x1b[1m2.Pipeline Reports:\x1b[0m");
+    console.log("\x1b[1m3.Pipeline Reports:\x1b[0m");
     // Pipeline Report
-    await page.locator('li[class="sidemenu-item ng-star-inserted"]').nth(2).click();
+    await page.locator('li[class="sidemenu-item ng-star-inserted"]').nth(3).click();
     await page.waitForTimeout(1500);
     //Select Customer 
     await page.locator('div[class="mat-mdc-text-field-wrapper mdc-text-field mdc-text-field--filled"]').nth(0).click();
@@ -223,33 +302,15 @@ test(' Reports ', async ({ page, baseURL }) => {
 
   //console.log('File is not empty/corrupted');
 
-//   if (page.url().includes('https://dev-outamateds.outamationlabs.com/app/internal/assignments/reports/pipeline-report')) {
-
-//       addResult({
-//             srNo: `${reportBase}.2`,
-//             module: 'Pipeline Report',
-//             status: 'Pass',
-//             URL: `<a href="${base}/app/internal/assignments/reports/pipeline-report">Pipeline Report</a>`
-//         });
-//     } else {
-//         addResult({
-//             srNo: `${reportBase}.2`,
-//             module: 'Pipeline Report',
-//             status: 'Fail',
-//             URL: `<a href="${base}/app/internal/assignments/reports/pipeline-report">Pipeline Report</a>`
-//         });
-//     }
-
-
     //Reports 
     await page.locator('mat-expansion-panel').filter({ hasText: 'Reports' }).click();
     await page.waitForTimeout(1500);
     // await page.locator('span[class="title"]').nth(1).click();
     // await page.waitForTimeout(1500);  
     
-    console.log("\x1b[1m3.Revenue Reports:\x1b[0m");
+    console.log("\x1b[1m4.Revenue Reports:\x1b[0m");
     // Revenue Report
-    await page.locator('li[class="sidemenu-item ng-star-inserted"]').nth(3).click();
+    await page.locator('li[class="sidemenu-item ng-star-inserted"]').nth(4).click();
     await page.waitForTimeout(1500);
     //Select View: Client 
 
@@ -260,7 +321,7 @@ test(' Reports ', async ({ page, baseURL }) => {
     await page.waitForTimeout(1500);
 
     // // Exact folder path
-    // const reportsDirRev1 = 'C:\\DS_playwright-test\\AOM_Reports';
+    // const reportsDirRev1 = 'C:\\DS_playwright-test\\Research_Reports';
 
     // Wait for download event
     const downloadPromiseRev1 = page.waitForEvent('download');
@@ -324,7 +385,7 @@ test(' Reports ', async ({ page, baseURL }) => {
   await page.waitForTimeout(1500);
 
 //    // Exact folder path
-//     const reportsDirRev2 = 'C:\\DS_playwright-test\\AOM_Reports';
+//     const reportsDirRev2 = 'C:\\DS_playwright-test\\Research_Reports';
 
   // Wait for download event
   const downloadPromiseRev2 = page.waitForEvent('download');
@@ -400,9 +461,9 @@ test(' Reports ', async ({ page, baseURL }) => {
     // await page.waitForTimeout(1500);  
 
 
-    console.log("\x1b[1m4.Fee & COGS Reports:\x1b[0m");
+    console.log("\x1b[1m5.Fee & COGS Reports:\x1b[0m");
     // Fee & COGS Report
-    await page.locator('li[class="sidemenu-item ng-star-inserted"]').nth(4).click();
+    await page.locator('li[class="sidemenu-item ng-star-inserted"]').nth(5).click();
     await page.waitForTimeout(1500);
     //Select View: Fee Type
     //Date Picker
@@ -554,9 +615,9 @@ test(' Reports ', async ({ page, baseURL }) => {
     // await page.waitForTimeout(1500);  
 
 
-    console.log("\x1b[1m5.Quality Check Reports:\x1b[0m");
+    console.log("\x1b[1m6.Quality Check Reports:\x1b[0m");
     // Quality Check Report
-    await page.locator('li[class="sidemenu-item ng-star-inserted"]').nth(5).click(); 
+    await page.locator('li[class="sidemenu-item ng-star-inserted"]').nth(6).click(); 
     await page.waitForTimeout(1500);
     //Date Picker
     await page.locator('div[class="mat-mdc-form-field-icon-suffix ng-star-inserted"]').click();
@@ -629,25 +690,30 @@ test(' Reports ', async ({ page, baseURL }) => {
     //     });
     // }
 
-
-    //Reports 
+     //Reports 
     await page.locator('mat-expansion-panel').filter({ hasText: 'Reports' }).click();
     await page.waitForTimeout(1500);
+    // await page.locator('span[class="title"]').nth(1).click();
+    // await page.waitForTimeout(1500);  
 
-    console.log("\x1b[1m6.Production Reports:\x1b[0m");
-    // Production Report
-    await page.locator('li[class="sidemenu-item ng-star-inserted"]').nth(6).click();
+
+    console.log("\x1b[1m7.Rejection Report:\x1b[0m");
+    // Rejection Report
+    await page.locator('li[class="sidemenu-item ng-star-inserted"]').nth(7).click(); 
     await page.waitForTimeout(1500);
     //Date Picker
     await page.locator('div[class="mat-mdc-form-field-icon-suffix ng-star-inserted"]').click();
     await page.waitForTimeout(1500);
     await page.locator('button[class="mdc-button mat-mdc-button-base mat-mdc-button mat-unthemed"]').nth(6).click();
     await page.waitForTimeout(1500);
+    //Apply Filters
+     await page.locator('button[class="mdc-button mat-mdc-button-base mdc-button--unelevated mat-mdc-unelevated-button mat-primary ng-star-inserted"]').click(); 
+    await page.waitForTimeout(1500);
 
         // =================== DOWNLOAD LOGIC ====================
 
-  // Wait for download event
-    const downloadPromiseProd = page.waitForEvent('download');
+      // Wait for download event
+    const downloadPromiseRejection = page.waitForEvent('download');
 
      // Click Export button
     await page.locator('button[aria-label="Export"]').click();
@@ -657,60 +723,42 @@ test(' Reports ', async ({ page, baseURL }) => {
   await page.locator('button[role="menuitem"]').nth(0).click();
 
   // Capture download
-  const downloadProd = await downloadPromiseProd;
+  const downloadRejection = await downloadPromiseRejection;
 
  // Original downloaded file name
-  const originalFileNameProd = await downloadProd.suggestedFilename();
+  const originalFileNameRejection = await downloadRejection.suggestedFilename();
 
   // File extension
-  const extensionProd = path.extname(originalFileNameProd);
+  const extensionRejection = path.extname(originalFileNameRejection);
 
   // Validate Excel format
-  expect(['.xlsx']).toContain(extensionProd);
+  expect(['.xlsx']).toContain(extensionRejection);
 
   // Save with SAME downloaded file name
-  const filePathProd = path.join(currentRunDir, originalFileNameProd);
+  const filePathRejection = path.join(currentRunDir, originalFileNameRejection);
 
   // Save file directly into AOM_Reports folder
-  await downloadProd.saveAs(filePathProd);
+  await downloadRejection.saveAs(filePathRejection);
 
-  console.log(`File downloaded successfully: ${originalFileNameProd}`);
+  console.log(`File downloaded successfully: ${originalFileNameRejection}`);
 
 
     // =================== VALIDATIONS ====================
 
     // File exists?
-    expect(fs.existsSync(filePathProd)).toBeTruthy();
-    //console.log('File exists:', filePathProd);
+    expect(fs.existsSync(filePathRejection)).toBeTruthy();
+    //console.log('File exists:', filePathRejection);
 
     // Correct extension?
-    expect(['.xlsx']).toContain(extensionProd);
+    expect(['.xlsx']).toContain(extensionRejection);
 
     // Not empty?
-    const statsProd = fs.statSync(filePathProd);
-    expect(statsProd.size).toBeGreaterThan(0);
-
-   // console.log('File is valid and not empty');
-
-    // if (page.url().includes('https://dev-outamateds.outamationlabs.com/app/internal/assignments/reports/standard-report')) {
-
-    //     addResult({
-    //         srNo: `${reportBase}.6`,
-    //         module: 'Production Report',
-    //         status: 'Pass',
-    //         URL: `<a href="${base}/app/internal/assignments/reports/standard-report">Production Report</a>`
-    //     });
-    // } else {
-    //     addResult({
-    //         srNo: `${reportBase}.6`,
-    //         module: 'Production Report',
-    //         status: 'Fail',
-    //         URL: `<a href="${base}/app/internal/assignments/reports/standard-report">Production Report</a>`
-    //     });
-    // }
+    const statsRejection = fs.statSync(filePathRejection);
+    expect(statsRejection.size).toBeGreaterThan(0);
 
 
-         const parentFolder = 'C:\\DS_playwright-test 1\\AOM_Reports';
+
+         const parentFolder = 'C:\\DS_playwright-test 1\\Research_Reports';
 
          if (!fs.existsSync(parentFolder)) {
         console.log(`❌ Parent folder does not exist: ${parentFolder}`);
@@ -763,25 +811,50 @@ test(' Reports ', async ({ page, baseURL }) => {
             //console.log(`✅ New Orders Export Report — found ${count} file`);
             for (const f of files) //console.log(`     • ${f}`);
             addResult({
-                product: "AOM",
+                product: "Research",
                 srNo: `${reportBase}.1`,
                 module: 'Orders Export Report',
                 status: 'Pass',
-                URL: `<a href="${base}/app/internal/assignments/reports/order-export">Order Export Report</a>`
+                URL: `<a href="${base}/app/internal/research/reports/order-export">Order Export Report</a>`
             });
             } else {
           //   console.log(`❌ New Orders Export Report — expected 1, found ${count}`);
             for (const f of files) //console.log(`     • ${f}`);
             addResult({
-                product: "AOM",
+                product: "Research",
                 srNo: `${reportBase}.1`,
                 module: 'Orders Export Report',
                 status: 'Fail',
-                URL: `<a href="${base}/app/internal/assignments/reports/order-export">Order Export Report</a>`
+                URL: `<a href="${base}/app/internal/research/reports/order-export">Order Export Report</a>`
             });
             }
         }
 
+        // ---------- 2. Invoice Report (expect 1) ----------
+        {
+            const { count, files } = countFiles('Covius');
+            if (count === 1) {
+          //  console.log(`✅ Invoice Report — found ${count} file`);
+            for (const f of files) //console.log(`     • ${f}`);
+            addResult({
+                product: "Research",
+                srNo: `${reportBase}.2`,
+                module: 'Invoice Report',
+                status: 'Pass',
+                URL:  `<a href="${base}/app/internal/research/reports/invoice">Invoice Report</a>`
+            });
+            } else {
+         //   console.log(`❌ Invoice Report — expected 1, found ${count}`);
+            for (const f of files) //console.log(`     • ${f}`);
+            addResult({
+                product: "Research",
+                srNo: `${reportBase}.2`,
+                module: 'Invoice Report',
+                status: 'Fail',
+                URL:  `<a href="${base}/app/internal/research/reports/invoice">Invoice Report</a>`
+            });
+            }
+        }        
         // ---------- 2. Pipeline Report (expect 1) ----------
         {
             const { count, files } = countFiles('pipeline');
@@ -789,21 +862,21 @@ test(' Reports ', async ({ page, baseURL }) => {
           //     console.log(`✅ Pipeline Report — found ${count} file`);
             for (const f of files) //console.log(`     • ${f}`);
             addResult({
-                product: "AOM",
-                srNo: `${reportBase}.2`,
+                product: "Research",
+                srNo: `${reportBase}.3`,
                 module: 'Pipeline Report',
                 status: 'Pass',
-                URL: `<a href="${base}/app/internal/assignments/reports/pipeline-report">Pipeline Report</a>`
+                URL: `<a href="${base}/app/internal/research/reports/pipeline-report">Pipeline Report</a>`
             });
             } else {
           //  console.log(`❌ Pipeline Report — expected 1, found ${count}`);
             for (const f of files) //console.log(`     • ${f}`);
             addResult({
-                product: "AOM",
-                srNo: `${reportBase}.2`,
+                product: "Research",
+                srNo: `${reportBase}.3`,
                 module: 'Pipeline Report',
                 status: 'Fail',
-                URL: `<a href="${base}/app/internal/assignments/reports/pipeline-report">Pipeline Report</a>`
+                URL: `<a href="${base}/app/internal/research/reports/pipeline-report">Pipeline Report</a>`
             });
             }
         }
@@ -813,8 +886,8 @@ test(' Reports ', async ({ page, baseURL }) => {
             const { count, files } = countFiles('revenue');
             
             addResult({
-                    product: "AOM",
-                    srNo: `${reportBase}.3`,
+                    product: "Research",
+                    srNo: `${reportBase}.4`,
                     module: 'Revenue Reports',
                     status: 'Pass',
                     URL: 'Revenue report '
@@ -825,11 +898,11 @@ test(' Reports ', async ({ page, baseURL }) => {
           //     console.log(`✅ Revenue Report — found ${count} files`);
         files.forEach((f, index) => { //console.log(`     • ${f}`);
             addResult({
-                product: "AOM",
-                srNo: `${reportBase}.3.${index + 1}`,
+                product: "Research",
+                srNo: `${reportBase}.4.${index + 1}`,
                 module:  `Revenue Report ${index + 1}`,
                 status: 'Pass',
-                URL: `<a href="${base}/app/internal/assignments/reports/revenue-report">Revenue Report</a>`
+                URL: `<a href="${base}/app/internal/research/reports/revenue-report">Revenue Report</a>`
             });
         });
 
@@ -837,11 +910,11 @@ test(' Reports ', async ({ page, baseURL }) => {
           //  console.log(`❌ Revenue Report — expected 2, found ${count}`);
         files.forEach((f, index) => { //console.log(`     • ${f}`);
             addResult({
-                product: "AOM",
-                srNo: `${reportBase}.3.${index + 1}`,
+                product: "Research",
+                srNo: `${reportBase}.4.${index + 1}`,
                 module: `Revenue Report ${index + 1}`,
                 status: 'Fail',
-                URL: `<a href="${base}/app/internal/assignments/reports/revenue-report">Revenue Report</a>`
+                URL: `<a href="${base}/app/internal/research/reports/revenue-report">Revenue Report</a>`
             });
         });            
             }
@@ -854,8 +927,8 @@ test(' Reports ', async ({ page, baseURL }) => {
             const count = files.length;
 
         addResult({
-            product: "AOM",
-                    srNo: `${reportBase}.4`,
+            product: "Research",
+                    srNo: `${reportBase}.5`,
                     module: 'Fee & COGS Reports',
                     status: 'Pass',
                     URL: 'Fee & COGS report '
@@ -866,22 +939,22 @@ test(' Reports ', async ({ page, baseURL }) => {
          files.forEach((f, index) => { //console.log(`     • ${f}`);
             
             addResult({
-                product: "AOM",
-                srNo: `${reportBase}.4.${index + 1}`,
+                product: "Research",
+                srNo: `${reportBase}.5.${index + 1}`,
                 module: `Fee & COGS Report ${index + 1} `,
                 status: 'Pass',
-                URL: `<a href="${base}/app/internal/assignments/reports/fee-cogs-report">Fee & COGS Report</a>`
+                URL: `<a href="${base}/app/internal/research/reports/fee-cogs-report">Fee & COGS Report</a>`
             });
           });  
             } else {
           //  console.log(`❌ COGS Report — expected 2, found ${count}`);
         files.forEach((f, index) => { //console.log(`     • ${f}`);
             addResult({
-                product: "AOM",
-                srNo: `${reportBase}.4.${index + 1}`,
+                product: "Research",
+                srNo: `${reportBase}.5.${index + 1}`,
                 module: `Fee & COGS Report ${index + 1}`,
                 status: 'Fail',
-                URL:`<a href="${base}/app/internal/assignments/reports/fee-cogs-report">Fee & COGS Report</a>`
+                URL:`<a href="${base}/app/internal/research/reports/fee-cogs-report">Fee & COGS Report</a>`
             });
         });    
             }
@@ -894,50 +967,52 @@ test(' Reports ', async ({ page, baseURL }) => {
        //     console.log(`✅ Quality Check Report — found ${count} file`);
             for (const f of files) //console.log(`     • ${f}`);
             addResult({
-                product: "AOM",
-                srNo: `${reportBase}.5`,
+                product: "Research",
+                srNo: `${reportBase}.6`,
                 module: 'Quality Check Report',
                 status: 'Pass',
-                URL: `<a href="${base}/app/internal/assignments/reports/quality-check-report">Quality Check Report</a>`
+                URL: `<a href="${base}/app/internal/research/reports/quality-check-report">Quality Check Report</a>`
             });
             } else {
          //   console.log(`❌ Quality Check Report — expected 1, found ${count}`);
             for (const f of files) //console.log(`     • ${f}`);
             addResult({
-                product: "AOM",
-                srNo: `${reportBase}.5`,
+                product: "Research",
+                srNo: `${reportBase}.6`,
                 module: 'Quality Check Report',
                 status: 'Fail',
-                URL: `<a href="${base}/app/internal/assignments/reports/quality-check-report">Quality Check Report</a>`
+                URL: `<a href="${base}/app/internal/research/reports/quality-check-report">Quality Check Report</a>`
             });
             }
         }
 
-        // ---------- 6. Production Report (expect 1) ----------
+           // ---------- 7. Rejection Report (expect 1) ----------
         {
-            const { count, files } = countFiles('production-report');
+            const { count, files } = countFiles('rejection');
             if (count === 1) {
-          //  console.log(`✅ Production Report — found ${count} file`);
+       //     console.log(`✅ Rejection Report — found ${count} file`);
             for (const f of files) //console.log(`     • ${f}`);
             addResult({
-                product: "AOM",
-                srNo: `${reportBase}.6`,
-                module: 'Production Report',
+                product: "Research",
+                srNo: `${reportBase}.7`,
+                module: 'Rejection Report',
                 status: 'Pass',
-                URL:  `<a href="${base}/app/internal/assignments/reports/standard-report">Production Report</a>`
+                URL: `<a href="${base}/app/internal/research/reports/rejection-report">Rejection Report</a>`
             });
             } else {
-         //   console.log(`❌ Production Report — expected 1, found ${count}`);
+         //   console.log(`❌ Rejection Report — expected 1, found ${count}`);
             for (const f of files) //console.log(`     • ${f}`);
             addResult({
-                product: "AOM",
-                srNo: `${reportBase}.6`,
-                module: 'Production Report',
+                product: "Research",
+                srNo: `${reportBase}.7`,
+                module: 'Rejection Report',
                 status: 'Fail',
-                URL:  `<a href="${base}/app/internal/assignments/reports/standard-report">Production Report</a>`
+                URL: `<a href="${base}/app/internal/research/reports/rejection-report">Rejection Report</a>`
             });
             }
-        }        
+        }
+
+        
 
 
     
