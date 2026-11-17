@@ -12,7 +12,7 @@ resetSrCounter();
 
 //@Outamate DS:
 
-test(' Dashboard Received ', async ({ page , baseURL}) => {
+test('Dashboard Received ', async ({ page , baseURL}) => {
 
     await page.goto(baseURL ??  '/app/internal/lien-release/dashboard/order-status');
     await page.waitForLoadState('networkidle');

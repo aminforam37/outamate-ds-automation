@@ -48,7 +48,7 @@ async function assertTransition(
 }
 
 //
-test('@Outamate DS: Order Creation ', async ({ page }) => {
+test(' Order Creation ', async ({ page }) => {
 
 
     // --- GLOBAL RUNTIME MONITORING HOOKS ---

@@ -16,6 +16,9 @@ AOM_Reports/
 LRP_Reports/
 Research_Reports/
 
+# Bulk order run progress + report (17-Research_BulkOrderProcessing)
+Bulk_Orders/
+
 # Documents/ holds upload fixtures that ARE tracked (INDEX.pdf, Prior SP.pdf,
 # 26219076.pdf, ...). Only the files the suite downloads into it are ignored.
 Documents/GeneratedDocument_*.pdf
@@ -26,3 +29,7 @@ tests/Order_Creation1.spec.ts
 tests/ver.spec.ts
 tests/AOM_TestOrder.spec.ts
 tests/LRP_Dashboard.spec.ts
+
+# Local-only helpers, not pushed
+tests/support/
+TestData/

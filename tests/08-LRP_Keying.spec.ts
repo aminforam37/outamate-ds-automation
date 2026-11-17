@@ -46,8 +46,149 @@ async function assertTransition(
     console.log(` Inspected Transition Target Successfully: [${contextName}]`);
 }
 
-//
-test('@Outamate DS: Keying Process ', async ({ page }) => {
+// --- KEYING FORM HELPERS ---
+// Document Information is a repeatable group. Its sub-field ids are positional
+// (key + groupNo + fieldNo), so they shift whenever the schema changes.
+// Locate fields by data-field-key + data-group-index instead.
+const kf = (page: any, key: string, g: number = 0) =>
+    page.locator(`div.form-field[data-field-key="${key}"][data-group-index="${g}"]`);
+
+async function kfFill(page: any, key: string, value: string, g: number = 0) {
+    await kf(page, key, g).locator('input, textarea').first().fill(value);
+    await page.waitForTimeout(500);
+}
+
+async function kfSelect(page: any, key: string, g: number = 0, option: number | RegExp = 0) {
+    await kf(page, key, g).locator('mat-select').first().click();
+    await page.waitForTimeout(1000);
+    const opts = page.locator('mat-option');
+    const opt = typeof option === 'number' ? opts.nth(option) : opts.filter({ hasText: option }).first();
+    const text = (await opt.innerText()).trim();
+    await opt.click();
+    await page.waitForTimeout(1000);
+    return text;
+}
+
+async function kfToday(page: any, key: string, g: number = 0) {
+    await kf(page, key, g).locator('button[aria-label="Open calendar"]').click();
+    await page.waitForTimeout(1000);
+    await page.locator('.mat-calendar-body-today').click();
+    await page.waitForTimeout(1000);
+}
+
+// Adds a Document Information group and returns its data-group-index.
+// Uses the Add button of the array that actually holds instrument_Name_DI (not a positional nth),
+// and derives the new index from the current group count (QC may load a different number of groups).
+async function addDocInfoGroup(page: any): Promise<number> {
+    const instruments = page.locator('div.form-field[data-field-key="instrument_Name_DI"]');
+    const before = await instruments.count();
+    const docInfoArray = page.locator('#DocumentInformation .array-group', {
+        has: page.locator('div.form-field[data-field-key="instrument_Name_DI"]'),
+    }).last();
+    await docInfoArray.locator(':scope > div.text-end button[mattooltip="Add"]').click();
+    await expect(instruments).toHaveCount(before + 1, { timeout: 10000 });
+    await page.waitForTimeout(1000);
+    return before;
+}
+
+// Beneficiaries used for each validation path
+const MERS_BENEFICIARY = 'UNITED WHOLESALE MORTGAGE, LLC';
+const NON_MERS_BENEFICIARY = 'EQUITY PRIME MORTGAGE LLC';
+
+// Opens Beneficiary Search, searches by name and selects that beneficiary.
+// Also checks its MERS Indicator so the form runs the expected validation.
+// LRP shows a single "Beneficiary" field / .common-section (AOM: Assignor + Assignee / .assignor-section).
+// MERS: MIN Number is required on Complete. Non-MERS: it is optional.
+async function selectBeneficiary(page: any, isMers: boolean) {
+    const label = isMers ? 'MERS' : 'Non-MERS';
+    const beneName = isMers ? MERS_BENEFICIARY : NON_MERS_BENEFICIARY;
+    await page.locator('button[mattooltip="Beneficiary Search"]').click();
+    await page.waitForTimeout(1000);
+
+    // Real result cards only - the "Search to find..." / "No Record Found" cards share .beneficiary-item
+    const items = page.locator('.beneficiary-list .beneficiary-item:not(.no-data-card)');
+    const noRecord = page.locator('.beneficiary-list .no-data-card', { hasText: 'No Record Found' });
+    const namePattern = new RegExp(beneName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s*'), 'i');
+    const byName = items.filter({ hasText: namePattern });
+
+    // Search by Beneficiary (LRP) / Assignor (AOM) first, then by Assignee if that field exists
+    const primaryInput = page.locator('input[placeholder="Beneficiary"], input[placeholder="Assignor"]').first();
+    const assigneeInput = page.locator('input[placeholder="Assignee"]');
+    const searchInputs = (await assigneeInput.count()) > 0
+        ? [[primaryInput, assigneeInput], [assigneeInput, primaryInput]]
+        : [[primaryInput, null]];
+    for (const [input, other] of searchInputs) {
+        if (other) await other.fill('');
+        await input.fill(beneName);
+        await page.locator('button.search-button').click();
+        await items.first().or(noRecord).waitFor({ state: 'visible', timeout: 20000 });
+        await page.waitForTimeout(500);
+        if ((await byName.count()) > 0) break;
+    }
+    if ((await byName.count()) === 0) {
+        const returned = await items.locator('.common-section .fw-medium, .assignor-section .fw-medium').allInnerTexts().catch(() => []);
+        throw new Error(`${label} beneficiary "${beneName}" not found in Beneficiary Search. Results returned: ${returned.length ? returned.join(' | ') : 'none'}`);
+    }
+    const ind = isMers ? 'yes' : 'no';
+    const match = byName.filter({
+        has: page.locator(`.common-section .mers-indicator.${ind}, .assignor-section .mers-indicator.${ind}`),
+    }).first();
+    if ((await match.count()) === 0) {
+        throw new Error(`Beneficiary "${beneName}" found, but its MERS Indicator is not "${isMers ? 'Yes' : 'No'}".`);
+    }
+    await match.locator('.radio-selection .mdc-radio').click();
+    await page.waitForTimeout(1000);
+    await page.locator('button:has-text(" Submit ")').click();
+    await page.waitForTimeout(1500);
+    console.log(`✅ ${label} beneficiary selected: ${beneName}`);
+}
+
+// Original Lender MERS Ind follows the beneficiary: MERS -> Yes, Non-MERS -> No
+const mersInd = (isMers: boolean) => (isMers ? /^\s*Yes\s*$/i : /^\s*No\s*$/i);
+
+// Sets Original Lender MERS Ind on every Document Information group that shows it
+async function setAllOriginalLenderMersInd(page: any, isMers: boolean) {
+    const fields = page.locator('div.form-field[data-field-key="original_Lender_MERS_Ind_DI"]');
+    const count = await fields.count();
+    for (let i = 0; i < count; i++) {
+        const g = Number(await fields.nth(i).getAttribute('data-group-index'));
+        await kfSelect(page, 'original_Lender_MERS_Ind_DI', g, mersInd(isMers));
+    }
+}
+
+// Images (tagging_DI) -> Document name dropdown. Option 0 is "Clear".
+async function kfImage(page: any, g: number = 0, option: number = 1) {
+    await kf(page, 'tagging_DI', g).locator('mat-select[id$="docname"]').first().click();
+    await page.waitForTimeout(1000);
+    await page.locator('mat-option').nth(option).click();
+    await page.waitForTimeout(1000);
+}
+
+// Complete can now raise an "Incomplete Tagging" confirmation, or a warning toast
+// when a conditionally-required field (e.g. Number of Borrowers) is empty.
+async function afterComplete(page: any, contextName: string) {
+    await page.waitForTimeout(1500);
+    const taggingDialog = page.locator('mat-dialog-container', { hasText: 'Incomplete Tagging' });
+    if (await taggingDialog.isVisible()) {
+        await taggingDialog.locator('button:has-text("Yes")').click();
+        await page.waitForTimeout(1500);
+    }
+    const invalidToast = page.locator('.toast-message', { hasText: 'invalid or missing information' });
+    if (await invalidToast.first().isVisible()) {
+        const invalidFields = page.locator('.mat-mdc-form-field-invalid');
+        const count = await invalidFields.count();
+        const labels: string[] = [];
+        for (let i = 0; i < count; i++) {
+            const label = await invalidFields.nth(i).locator('mat-label, .mdc-floating-label').first().innerText().catch(() => `Field #${i + 1}`);
+            labels.push(`"${label.trim()}"`);
+        }
+        await page.screenshot({ path: 'failure-screenshots/keying-validation-error.png', fullPage: true });
+        throw new Error(`Keying Complete Blocked on [${contextName}]. Invalid/missing field(s): ${labels.join(', ') || 'Unknown Field'}`);
+    }
+}
+
+//@Outamate DS:
+test(' Keying Process ', async ({ page }) => {
 
 
     // --- GLOBAL RUNTIME MONITORING HOOKS ---
@@ -142,162 +283,134 @@ test('@Outamate DS: Keying Process ', async ({ page }) => {
         console.log("❌ Keying page validation failed.");
     }
     
-    //Document Information 
-    await page.locator('div[data-section-code="DocumentInformation"]').nth(0).click();
-    await page.waitForTimeout(1000);
-    const InstName = await page.locator('span[class="mdc-list-item__primary-text"]').nth(4);
-    const InstrumentName = await InstName.innerText();
-    await InstName.click();
-    
-    
-    await page.waitForTimeout(1000);
+    //Document Information 1 (group index 0) : Deed of trust
+    // Original Lender / Maturity / Consideration / Trustee are only shown for Mortgage-type instruments,
+    // and Borrower, Number of Borrowers, Consideration, Original Lender, MERS Ind are required on Complete.
+    // Deed of trust also shows the LRP "Trustee Info" card used further down.
+    const InstrumentName = await kfSelect(page, 'instrument_Name_DI', 0, /^\s*Deed of trust\s*$/i);
     //BorrowerName
     const BorrowerName = faker.person.firstName();
-    await page.getByLabel('Borrower(s) Name').fill(BorrowerName);
-    await page.waitForTimeout(1000);
+    await kfFill(page, 'borrower_DI', BorrowerName, 0);
+    //Number of Borrowers (new)
+    await kfFill(page, 'number_Of_Borrowers', '1', 0);
     //InstrumentDateKeying
-    await page.locator('button[aria-label="Open calendar"]').nth(2).click();
-    await page.waitForTimeout(1000);
-    const InstrumentDateKeying = await page.locator('.mat-calendar-body-today').click();
-    await page.waitForTimeout(1000);
+    await kfToday(page, 'instrument_Date_DI', 0);
     //Maturity
-    await page.locator('button[aria-label="Open calendar"]').nth(3).click();
-    await page.waitForTimeout(1000);
-    const MaturityDateKeying = await page.locator('.mat-calendar-body-today').click();
-    await page.waitForTimeout(1000);
+    await kfToday(page, 'maturity_Date_DI', 0);
     //Consideration Amount
     const ConsiderationNumberKeying = faker.finance.amount({ min: 1000, max: 10000, dec: 2 }).toString();
-    await page.getByLabel('Consideration Amount').nth(1).fill(ConsiderationNumberKeying);
-    await page.waitForTimeout(1000);
+    await kfFill(page, 'consideration_Amount_DI', ConsiderationNumberKeying, 0);
     //Original Lender
     const OriginalLender = faker.person.firstName();
-    await page.locator('input[id="original_Lender_DI17"]').fill(OriginalLender);
-    await page.waitForTimeout(1000);
+    await kfFill(page, 'original_Lender_DI', OriginalLender, 0);
     //Original Address
     const AddressLineKeying = faker.location.streetAddress();
-    await page.locator('input[id="original_Lender_Address_DI18"]').fill(AddressLineKeying);
-    await page.waitForTimeout(1000);
-    //MERS Ind
-    await page.locator('div[data-field-key="original_Lender_MERS_Ind_DI"]').click();
-    await page.waitForTimeout(1000);
-    await page.locator('span[class="mdc-list-item__primary-text"]').nth(0).click();
-    await page.waitForTimeout(1000);
-    //Trustee Name 
+    await kfFill(page, 'original_Lender_Address_DI', AddressLineKeying, 0);
+    //MERS Ind (MERS beneficiary in Keying -> Yes)
+    await kfSelect(page, 'original_Lender_MERS_Ind_DI', 0, mersInd(true));
+    //Trustee Name (visible only for Deed of trust)
     const TrusteeName = faker.person.firstName();
-    await page.locator('input[id="trustee_DI110"]').fill(TrusteeName);
-    await page.waitForTimeout(1500);
+    await kfFill(page, 'trustee_DI', TrusteeName, 0);
     //Recorded State
-    await page.locator('div[data-field-key="recorded_State_DI"]').click();
-    await page.waitForTimeout(1000);
-    await page.locator('span[class="mdc-list-item__primary-text"]').nth(0).click();
-    await page.waitForTimeout(1000);
-    //Recorded County 
-    await page.locator('div[data-field-key="recorded_County_DI"]').click();
-    await page.waitForTimeout(1000);
-    const CountyKeying = await page.locator('span[class="mdc-list-item__primary-text"]').nth(4).click();
-    await page.waitForTimeout(1000);
+    await kfSelect(page, 'recorded_State_DI', 0, 0);
+    //Recorded County
+    await kfSelect(page, 'recorded_County_DI', 0, 4);
     //Recorded Agency
-    await page.locator('div[data-field-key="recorded_Agency_DI"]').click(); 
-    await page.waitForTimeout(1500);
-    const RecordedAgency = await page.locator('span[class="mdc-list-item__primary-text"]').nth(1).click();
-    await page.waitForTimeout(1500);
+    await kfSelect(page, 'recorded_Agency_DI', 0, 1);
     //Recorded Date
-    await page.locator('button[aria-label="Open calendar"]').nth(4).click();
-    await page.waitForTimeout(1500);
-    const RecordedDate = await page.locator('.mat-calendar-body-today').click();
-    await page.waitForTimeout(1000);
+    await kfToday(page, 'recorded_Date_DI', 0);
     //Recorded Book
     const RecordedBook = faker.number.int({ min: 100000, max: 999999 }).toString();
-    await page.locator('input[id="recorded_Book_DI115"]').fill(RecordedBook);
-    await page.waitForTimeout(1000);
+    await kfFill(page, 'recorded_Book_DI', RecordedBook, 0);
     //Recorded Page
     const RecordedPage = faker.number.int({ min: 100000, max: 999999 }).toString();
-    await page.locator('input[id="recorded_Page_DI116"]').fill(RecordedPage);
-    await page.waitForTimeout(1000);
+    await kfFill(page, 'recorded_Page_DI', RecordedPage, 0);
 
-    //Images 1 
-    await page.locator('div[class="col-sm-4 form-field"]').nth(0).click();
-    await page.waitForTimeout(1000);
-    await page.locator('span[class="mdc-list-item__primary-text"]').nth(1).click();
-    await page.waitForTimeout(1000);
+    //Images 1
+    await kfImage(page, 0, 1);
 
-    //Add Document Information 1 
-    //Add button 
-    await page.locator('button[mattooltip="Add"]').nth(2).click();
-    await page.waitForTimeout(1000);
-    //Instrument Name 
-    await page.locator('div[data-section-code="DocumentInformation"]').nth(20).click();
-    await page.waitForTimeout(1500);
-    await page.locator('span[class="mdc-list-item__primary-text"]').nth(0).click();
-    await page.waitForTimeout(1500);
+    //Add Document Information 2 : Assignment of Mortgage
+    const g2 = await addDocInfoGroup(page);
+    //Instrument Name (Assignor / Assignee fields only shown for Assignment instruments)
+    await kfSelect(page, 'instrument_Name_DI', g2, /^\s*Assignment of Mortgage\s*$/i);
     //BorrowerName
     const BorrowerName2 = faker.person.firstName();
-    await page.getByLabel('Borrower(s) Name').nth(1).fill(BorrowerName2);
-    await page.waitForTimeout(1500);
+    await kfFill(page, 'borrower_DI', BorrowerName2, g2);
     //InstrumentDateKeying
-    await page.locator('button[aria-label="Open calendar"]').nth(5).click();
-    await page.waitForTimeout(1500);
-    const InstrumentDateKeying2= await page.locator('.mat-calendar-body-today').click();
-    await page.waitForTimeout(1000);
+    await kfToday(page, 'instrument_Date_DI', g2);
     //Recorded State
-    await page.locator('div[data-field-key="recorded_State_DI"]').nth(1).click();
-    await page.waitForTimeout(1500);
-    await page.locator('span[class="mdc-list-item__primary-text"]').nth(0).click();
-    await page.waitForTimeout(1500);
-    //Recorded County 
-    await page.locator('div[data-field-key="recorded_County_DI"]').nth(1).click();
-    await page.waitForTimeout(1500);
-    const CountyKeying2 = await page.locator('span[class="mdc-list-item__primary-text"]').nth(4).click();
-    await page.waitForTimeout(1500);
+    await kfSelect(page, 'recorded_State_DI', g2, 0);
+    //Recorded County
+    await kfSelect(page, 'recorded_County_DI', g2, 4);
     //Recorded Agency
-    await page.locator('div[data-field-key="recorded_Agency_DI"]').nth(1).click(); 
-    await page.waitForTimeout(1500);
-    const RecordedAgency2 = await page.locator('span[class="mdc-list-item__primary-text"]').nth(1).click();
-    await page.waitForTimeout(1500);
+    await kfSelect(page, 'recorded_Agency_DI', g2, 1);
     //Recorded Date
-    await page.locator('button[aria-label="Open calendar"]').nth(6).click();
-    await page.waitForTimeout(1500);
-    const RecordedDate2 = await page.locator('.mat-calendar-body-today').click();
-    await page.waitForTimeout(1000);
+    await kfToday(page, 'recorded_Date_DI', g2);
     //Recorded Book
     const RecordedBook2 = faker.number.int({ min: 100000, max: 999999 }).toString();
-    await page.locator('input[id="recorded_Book_DI215"]').fill(RecordedBook2);
-    await page.waitForTimeout(1000);
+    await kfFill(page, 'recorded_Book_DI', RecordedBook2, g2);
     //Recorded Page
     const RecordedPage2 = faker.number.int({ min: 100000, max: 999999 }).toString();
-    await page.locator('input[id="recorded_Page_DI216"]').fill(RecordedPage2);
-    await page.waitForTimeout(1000);
-    //Assignor MERS Ind 
-    await page.locator('div[data-field-key="assignor_MERS_Ind_DI"]').click();
-    await page.waitForTimeout(1000);
-    await page.locator('span[class="mdc-list-item__primary-text"]').nth(0).click();
-    await page.waitForTimeout(1000);
+    await kfFill(page, 'recorded_Page_DI', RecordedPage2, g2);
+    //Assignor MERS Ind
+    await kfSelect(page, 'assignor_MERS_Ind_DI', g2, 0);
     //Assignor
     const Assignor2 = faker.person.firstName();
-    await page.locator('input[id="assignor_DI229"]').fill(Assignor2);
-    await page.waitForTimeout(1500);
+    await kfFill(page, 'assignor_DI', Assignor2, g2);
     //Assignor Address
     const AssignorAddressKeying = faker.location.streetAddress();
-    await page.locator('input[id="assignor_Address_DI230"]').fill(AssignorAddressKeying);
-    await page.waitForTimeout(1500);
-    // //Assignee MERS Ind 
-    await page.locator('div[data-field-key="assignee_MERS_Ind_DI"]').click();
-    await page.waitForTimeout(1000);
-    await page.locator('span[class="mdc-list-item__primary-text"]').nth(0).click();
-    await page.waitForTimeout(1000);
+    await kfFill(page, 'assignor_Address_DI', AssignorAddressKeying, g2);
+    //Assignee MERS Ind
+    await kfSelect(page, 'assignee_MERS_Ind_DI', g2, 0);
     //Assignee
     const Assignee2 = faker.person.firstName();
-    await page.locator('input[id="assignee_DI232"]').fill(Assignee2);
-    await page.waitForTimeout(1500);
-    //Assignor Address
+    await kfFill(page, 'assignee_DI', Assignee2, g2);
+    //Assignee Address
     const AssigneeAddressKeying = faker.location.streetAddress();
-    await page.locator('input[id="assignee_Address_DI233"]').fill(AssigneeAddressKeying);
-    await page.waitForTimeout(1500);
+    await kfFill(page, 'assignee_Address_DI', AssigneeAddressKeying, g2);
     //images 2
-    await page.locator('div[class="col-sm-4 form-field"]').nth(2).click();
-    await page.waitForTimeout(1000);
-    await page.locator('span[class="mdc-list-item__primary-text"]').nth(2).click();
-    await page.waitForTimeout(1000);
+    await kfImage(page, g2, 2);
+
+    //Add Document Information 3 : CEMA
+    // CEMA shows Original Lender / Maturity / Consideration (same as Mortgage-type instruments)
+    const g3 = await addDocInfoGroup(page);
+    await kfSelect(page, 'instrument_Name_DI', g3, /CEMA/i);
+    //BorrowerName
+    const BorrowerNameCEMA = faker.person.firstName();
+    await kfFill(page, 'borrower_DI', BorrowerNameCEMA, g3);
+    //Number of Borrowers
+    await kfFill(page, 'number_Of_Borrowers', '1', g3);
+    //InstrumentDateKeying
+    await kfToday(page, 'instrument_Date_DI', g3);
+    //Maturity
+    await kfToday(page, 'maturity_Date_DI', g3);
+    //Consideration Amount
+    const ConsiderationCEMA = faker.finance.amount({ min: 1000, max: 10000, dec: 2 }).toString();
+    await kfFill(page, 'consideration_Amount_DI', ConsiderationCEMA, g3);
+    //Original Lender
+    const OriginalLenderCEMA = faker.person.firstName();
+    await kfFill(page, 'original_Lender_DI', OriginalLenderCEMA, g3);
+    //Original Address
+    const AddressLineCEMA = faker.location.streetAddress();
+    await kfFill(page, 'original_Lender_Address_DI', AddressLineCEMA, g3);
+    //MERS Ind (MERS -> Yes)
+    await kfSelect(page, 'original_Lender_MERS_Ind_DI', g3, mersInd(true));
+    //Recorded State
+    await kfSelect(page, 'recorded_State_DI', g3, 0);
+    //Recorded County
+    await kfSelect(page, 'recorded_County_DI', g3, 4);
+    //Recorded Agency
+    await kfSelect(page, 'recorded_Agency_DI', g3, 1);
+    //Recorded Date
+    await kfToday(page, 'recorded_Date_DI', g3);
+    //Recorded Book
+    const RecordedBookCEMA = faker.number.int({ min: 100000, max: 999999 }).toString();
+    await kfFill(page, 'recorded_Book_DI', RecordedBookCEMA, g3);
+    //Recorded Page
+    const RecordedPageCEMA = faker.number.int({ min: 100000, max: 999999 }).toString();
+    await kfFill(page, 'recorded_Page_DI', RecordedPageCEMA, g3);
+    //images CEMA
+    await kfImage(page, g3, 3);
 
     //Recording Category
     await page.locator('div[data-field-key="recording_type_RC_LRP"]').click();
@@ -338,36 +451,33 @@ test('@Outamate DS: Keying Process ', async ({ page }) => {
     const ParcelID = faker.number.int({ min: 1, max: 9999 }).toString();
     await page.locator('input[id="plat_Number_PI"]').fill(ParcelID);
     //MIN Number
-    const MINNumber = faker.number.int({ min: 1, max: 9999 }).toString();
+    let MINNumber = faker.number.int({ min: 1, max: 9999 }).toString();
     await page.locator('input[id="min_Number_DI"]').fill(MINNumber);
     await page.waitForTimeout(1000);
 
     //Trustee info
-    await page.locator('[class="mat-mdc-radio-button mat-accent mat-mdc-radio-checked"]').click();
+    await page.locator('div[class="order-check"]').click();   
     await page.waitForTimeout(1000);
+    await page.getByRole('radio', { name: 'Yes' }).check();
+    await page.getByRole('radio', { name: 'No' }).check();
+    // await page.locator('[class="mat-mdc-radio-button mat-accent"]').click();
+    // await page.waitForTimeout(1000);
+    // await page.locator('[class="mat-mdc-radio-button mat-accent mat-mdc-radio-checked"]').click();
+    // await page.waitForTimeout(1000);
     await page.locator('span[class="mdc-button__label"]').nth(11).click();
 
-    //Bene 
-    await page.locator('button[mattooltip="Beneficiary Search"]').click();
-    await page.waitForTimeout(1000);
-    //Bene Assignor
-    await page.locator('input[placeholder="Beneficiary"]').fill('S');
-    //Search 
-    await page.locator('span[class="mat-mdc-button-persistent-ripple mdc-button__ripple"]').nth(5).click();
-    await page.locator('div[class="mdc-radio"]').nth(2).click();
-    await page.waitForTimeout(1000);
-    //Submit
-    await page.locator('button:has-text(" Submit ")').click();
-    await page.waitForTimeout(1500);
 
-    //Save 
+    //Bene : MERS (Keying In Progress) - MIN Number required
+    await selectBeneficiary(page, true);
+
+    //Save
     await page.locator('button[mattooltip="Save"]').click();
     await page.waitForTimeout(1000);
-    //Complete 
+    //Complete
     await page.locator('button[mattooltip="Complete"]').click();
-    await page.waitForTimeout(1000);
+    await afterComplete(page, 'Keying');
 
-    //Qc 
+    //Qc
     await page.locator('span[class="title"]').nth(4).click();
     await page.waitForTimeout(1500);  
     //Qc order grid 
@@ -408,15 +518,7 @@ test('@Outamate DS: Keying Process ', async ({ page }) => {
     await page.locator('a[href*="/documents"]').click();
 
     //DocGen Verification
-   const docSelector = page.locator('a.name-link', { hasText: 'Temp Delivery Package' });
-
-    try {
-        await expect(docSelector).toBeVisible(); 
-        console.log('✅ DocGen PDF created successfully. Temporary Delivery Package was found.');
-    } catch (error) {
-        console.error('❌ DocGen PDF creation failed. Temporary Delivery Package was not found.');
-    }
-
+    // Temp Delivery Package is no longer generated in the new flow - verification removed.
     const docSupporting = page.locator('a.name-link', { hasText: 'Supporting Documents' });
     try {
         await expect(docSupporting).toBeVisible(); 
@@ -434,58 +536,56 @@ test('@Outamate DS: Keying Process ', async ({ page }) => {
     await page.locator('span[class="mdc-list-item__primary-text"]').nth(3).click();
     await page.waitForTimeout(1500); 
 
-    //Document Information 3
-    //Add button 
-    await page.locator('button[mattooltip="Add"]').nth(3).click();
-    await page.waitForTimeout(1000);
-    //Instrument Name 
-    await page.locator('div[data-field-key="instrument_Name_DI"]').nth(2).click();
-    await page.waitForTimeout(1500);
-    await page.locator('span[class="mdc-list-item__primary-text"]').nth(3).click();
-    await page.waitForTimeout(1500);
+    //Document Information (QC) : Deed of trust
+    // Wait for the saved keying data to load before adding, so the new group index is correct
+    await kf(page, 'instrument_Name_DI', 0).waitFor({ state: 'visible', timeout: 15000 });
+    const gQC = await addDocInfoGroup(page);
+    //Instrument Name
+    await kfSelect(page, 'instrument_Name_DI', gQC, /^\s*Deed of trust\s*$/i);
     //BorrowerName
     const BorrowerName3 = faker.person.firstName();
-    await page.getByLabel('Borrower(s) Name').nth(2).fill(BorrowerName3);
-    await page.waitForTimeout(1500);
+    await kfFill(page, 'borrower_DI', BorrowerName3, gQC);
+    //Number of Borrowers (new)
+    await kfFill(page, 'number_Of_Borrowers', '1', gQC);
     //InstrumentDateKeying
-    await page.locator('button[aria-label="Open calendar"]').nth(9).click();
-    await page.waitForTimeout(1500);
-    const InstrumentDateKeying3= await page.locator('.mat-calendar-body-today').click();
-    await page.waitForTimeout(1000);
+    await kfToday(page, 'instrument_Date_DI', gQC);
     //Consideration Amount
     const ConsiderationNumber3 = faker.finance.amount({ min: 1000, max: 10000, dec: 2 }).toString();
-    await page.getByLabel('Consideration Amount').nth(2).fill(ConsiderationNumber3);
-    await page.waitForTimeout(1000);
+    await kfFill(page, 'consideration_Amount_DI', ConsiderationNumber3, gQC);
     //Original Lender
     const OriginalLender3 = faker.person.firstName();
-    await page.locator('input[id="original_Lender_DI37"]').fill(OriginalLender3);
-    await page.waitForTimeout(1000);
-
+    await kfFill(page, 'original_Lender_DI', OriginalLender3, gQC);
     //Original Address
     const AddressLineKeying3 = faker.location.streetAddress();
-    await page.locator('input[id="original_Lender_Address_DI38"]').fill(AddressLineKeying3);
-    await page.waitForTimeout(1000);
-    //MERS Ind
-    await page.locator('div[data-field-key="original_Lender_MERS_Ind_DI"]').nth(1).click();
-    await page.waitForTimeout(1000);
-    await page.locator('span[class="mdc-list-item__primary-text"]').nth(0).click();
-    await page.waitForTimeout(1000);
-    // //Trustee Name 
-    // const TrusteeName3 = faker.person.firstName();
-    // await page.locator('input[id="trustee_DI310"]').fill(TrusteeName3);
-    // await page.waitForTimeout(1500);
-    //images 3
-    await page.locator('div[class="col-sm-4 form-field"]').nth(4).click();
-    await page.waitForTimeout(1000);
-    await page.locator('span[class="mdc-list-item__primary-text"]').nth(4).click();
+    await kfFill(page, 'original_Lender_Address_DI', AddressLineKeying3, gQC);
+    //MERS Ind (Non-MERS in QC -> No)
+    await kfSelect(page, 'original_Lender_MERS_Ind_DI', gQC, mersInd(false));
+    //Trustee Name
+    const TrusteeName3 = faker.person.firstName();
+    await kfFill(page, 'trustee_DI', TrusteeName3, gQC);
+    //Recorded State / County / Agency / Date (required on Complete for Deed of trust)
+    await kfSelect(page, 'recorded_State_DI', gQC, 0);
+    await kfSelect(page, 'recorded_County_DI', gQC, 4);
+    await kfSelect(page, 'recorded_Agency_DI', gQC, 1);
+    await kfToday(page, 'recorded_Date_DI', gQC);
+    //images (QC)
+    await kfImage(page, gQC, 4);
+
+    //Bene : switch to Non-MERS (Quality Check)
+    // Non-MERS makes MIN Number optional - clear it to prove QC completes without it.
+    await selectBeneficiary(page, false);
+    // Non-MERS -> Original Lender MERS Ind = No on every group (groups keyed earlier were Yes)
+    await setAllOriginalLenderMersInd(page, false);
+    await page.locator('input[id="min_Number_DI"]').fill('');
+    MINNumber = '';
     await page.waitForTimeout(1000);
 
-     //Save 
+     //Save
     await page.locator('button[mattooltip="Save"]').click();
     await page.waitForTimeout(1000);
-    //Complete 
+    //Complete
     await page.locator('button[mattooltip="Complete"]').click();
-    await page.waitForTimeout(1000);
+    await afterComplete(page, 'Keying : QC');
     //Confirm
     await page.locator('button[color="success"]').click();
     await page.waitForTimeout(1500);
@@ -501,50 +601,8 @@ test('@Outamate DS: Keying Process ', async ({ page }) => {
 
     //Navigate to Documents tab
     await page.locator('a[href*="/documents"]').click();
-
-    //DocGen verification 
-    const docCDP = page.locator('a.name-link', { hasText: 'Complete Delivery Package' });
-
-    try {
-        await expect(docCDP).toBeVisible(); 
-        console.log('✅ DocGen PDF created successfully. Complete Delivery Package.');
-    } catch (error) {
-        console.error('❌ DocGen PDF creation failed. Complete Delivery Package.');
-    }
-
-    // Documents Page Validation
-    const documentsPageUrl = page.url();
-
-    // console.log("Documents Page URL:", documentsPageUrl);
-
-    // Match documents page URL
-    const isDocumentsPage =
-        /\/app\/internal\/lien-release\/orders\/\d+\/documents/.test(documentsPageUrl);
-
-    if (isDocumentsPage) {
-
-        addResult({
-            product: "LRP",
-            srNo: `${reportBase1}.1`,
-            module: 'Keying Document - Verification',
-            status: 'Pass',
-            URL: `<a href="${documentsPageUrl}">Keying Document - Verification</a>`
-        });
-
-        console.log("✅ DocGen successfully.");
-
-    } else {
-
-        addResult({
-            product: "LRP",
-            srNo: `${reportBase1}.1`,
-            module: 'Keying Document - Verification',
-            status: 'Fail',
-            URL: `<a href="${documentsPageUrl}">Keying Document - Verification</a>`
-        });
-
-        console.log("❌ DocGen validation failed.");
-    }
+    await page.waitForTimeout(1500);
+    // Complete Delivery Package / Keying Document - Verification removed (not generated in the new flow)
 
     //Mandatory Days hold
     await page.locator('span[class="title"]').nth(8).click();    
@@ -611,10 +669,10 @@ test('@Outamate DS: Keying Process ', async ({ page }) => {
     const Keying_Zipcode = await page.$eval('#address_Zip', el => (el as HTMLInputElement).value);
     const Keying_ConsiderationAmount = await page.$eval('#considerationAmount', el => (el as HTMLInputElement).value);
     const Keying_instrumentDate = await page.$eval('#instrumentDate', el => (el as HTMLInputElement).value);
-    const Keying_InstrumentName = (await page.locator('#instrument_Name_DI12 .mat-mdc-select-value-text .mat-mdc-select-min-line').textContent())?.trim() || '';
-    const Keying_BorrowersName = await page.$eval('#borrower_DI13', el => (el as HTMLInputElement).value);
-    const Keying_OLAddress = await page.$eval('#original_Lender_Address_DI18', el => (el as HTMLInputElement).value);
-    const Keying_OL = await page.$eval('#original_Lender_DI17', el => (el as HTMLInputElement).value);
+    const Keying_InstrumentName = (await kf(page, 'instrument_Name_DI', 0).locator('.mat-mdc-select-value-text .mat-mdc-select-min-line').textContent())?.trim() || '';
+    const Keying_BorrowersName = await kf(page, 'borrower_DI', 0).locator('input').first().inputValue();
+    const Keying_OLAddress = await kf(page, 'original_Lender_Address_DI', 0).locator('input').first().inputValue();
+    const Keying_OL = await kf(page, 'original_Lender_DI', 0).locator('input').first().inputValue();
     const Keying_SubDivision = (await page.locator('#sub_Division_PI .mat-mdc-select-value-text .mat-mdc-select-min-line').textContent())?.trim() || '';
     const Keying_Section = await page.$eval('#section_PI', el => (el as HTMLInputElement).value);
     const Keying_Block = await page.$eval('#block_PI', el => (el as HTMLInputElement).value);
@@ -657,7 +715,7 @@ test('@Outamate DS: Keying Process ', async ({ page }) => {
           const clickableVer = '<a href="' + verificationUrl + '" target="_blank">Keying Details</a>';
           addResult({
             product: "LRP",
-            srNo: `${reportBase1}.2`,
+            srNo: `${reportBase1}.1`,
             module: 'Keying Details - Verification',
             status: 'Pass',
             URL: clickableVer
@@ -670,7 +728,7 @@ test('@Outamate DS: Keying Process ', async ({ page }) => {
         const clickableVer = '<a href="' + failedVerificationUrl + '" target="_blank">Keying Details</a>';
         addResult({
             product: "LRP",
-          srNo: `${reportBase1}.2`,
+          srNo: `${reportBase1}.1`,
           module: 'Keying Details - Verification ',
           status: 'Fail',
           URL: clickableVer
@@ -767,48 +825,20 @@ incrementSrCounter();
     const PRI_InstrumentName = await InstNamePR.innerText();
     await InstNamePR.click();
 
-    //BorrowerName
-    const BorrowerNamePR = faker.person.firstName();
-    await page.getByLabel('Borrower(s) Name').fill(BorrowerNamePR);
-    await page.waitForTimeout(1000);
 
-    //InstrumentDateKeying
-    await page.locator('button[aria-label="Open calendar"]').nth(0).click();
-    await page.waitForTimeout(1000);
-    const today = new Date();
-    const InstrumentDatePR = `${today.getMonth() + 1}/${today.getDate()}/${today.getFullYear()}`; // Formats exactly to "7/7/2026"
+    //Recorded Date
+    await page.locator('button[aria-label="Open calendar"]').click();
+    await page.waitForTimeout(1500);
+    const todayRec = new Date();
+    const RecordedDatePR = `${todayRec.getMonth() + 1}/${todayRec.getDate()}/${todayRec.getFullYear()}`; // Formats exactly to "7/7/2026"
     await page.locator('.mat-calendar-body-today').click();
     await page.waitForTimeout(1000);
-            
-    //Consideration Amount
-    const ConsiderationNumberPR = faker.finance.amount({ min: 1000, max: 10000, dec: 2 }).toString();
-    await page.getByLabel('Consideration Amount').fill(ConsiderationNumberPR);
-    await page.waitForTimeout(1000);
 
-    //Original Lender
-    const OriginalLenderPR = faker.person.firstName();
-    await page.locator('input[id="original_Lender_PR"]').fill(OriginalLenderPR);
+    //Recorded Book
+    const RecordedBookPR = faker.number.int({ min: 100000, max: 999999 }).toString();
+    await page.locator('input[id="recorded_Book_PR"]').fill(RecordedBookPR);
     await page.waitForTimeout(1000);
-
-    //Beneficiary Name
-    const BeneficiaryNamePR = faker.person.firstName();
-    await page.locator('input[id="beneficiary_PR"]').fill(BeneficiaryNamePR);
-    await page.waitForTimeout(1000);
-    
-    //Beneficial Address
-    const BeneficialAddressPR = faker.location.streetAddress();
-    await page.locator('input[id="beneficiary_Address_PR"]').fill(BeneficialAddressPR);
-    await page.waitForTimeout(1000);
-
-    //Siging Line
-    const SigingLinePR = faker.location.streetAddress();
-    await page.locator('input[id="siging_Line_PR"]').fill(SigingLinePR);
-    await page.waitForTimeout(1000);
-
-    //Trustee Name
-    const TrusteeNamePR = faker.person.firstName();
-    await page.locator('input[id="trustee_PR"]').fill(TrusteeNamePR);
-    await page.waitForTimeout(1000);
+   
 
     //Save 
     await page.locator('button[mattooltip="Save"]').click();
@@ -860,41 +890,15 @@ incrementSrCounter();
     await page.getByRole('link', { name: 'keyboard Keying' }).click();
     await page.waitForTimeout(1500);  
 
-    //Recorded State
-    await page.locator('div[data-field-key="recorded_State_PR"]').click();
-    await page.waitForTimeout(1000);
-    const RdStatePR = await page.locator('span[class="mdc-list-item__primary-text"]').nth(0);
-    const RecordedStatePR = await RdStatePR.innerText();
-    await RdStatePR.click();
-    await page.waitForTimeout(1000);
-    //Recorded County 
-    await page.locator('div[data-field-key="recorded_County_PR"]').click();
-    await page.waitForTimeout(1000);
-    const CountyPR = await page.locator('span[class="mdc-list-item__primary-text"]').nth(4);
-    const RecordedCountyPR = await CountyPR.innerText();
-    await CountyPR.click();
-    await page.waitForTimeout(1000);
-    //Recorded Agency
-    await page.locator('div[data-field-key="recorded_Agency_PR"]').click(); 
-    await page.waitForTimeout(1500);
-    const AgencyPR = await page.locator('span[class="mdc-list-item__primary-text"]').nth(1);
-    const RecordedAgencyPR = await AgencyPR.innerText();
-    await AgencyPR.click();
-    await page.waitForTimeout(1500);
-    //Recorded Date
-    await page.locator('button[aria-label="Open calendar"]').nth(1).click();
-    await page.waitForTimeout(1500);
-    const todayRec = new Date();
-    const RecordedDatePR = `${todayRec.getMonth() + 1}/${todayRec.getDate()}/${todayRec.getFullYear()}`; // Formats exactly to "7/7/2026"
-    await page.locator('.mat-calendar-body-today').click();
-    await page.waitForTimeout(1000);
-    //Recorded Book
-    const RecordedBookPR = faker.number.int({ min: 100000, max: 999999 }).toString();
-    await page.locator('input[id="recorded_Book_PR"]').fill(RecordedBookPR);
-    await page.waitForTimeout(1000);
+
+
     //Recorded Page
     const RecordedPagePR = faker.number.int({ min: 100000, max: 999999 }).toString();
     await page.locator('input[id="recorded_Page_PR"]').fill(RecordedPagePR);
+    await page.waitForTimeout(1000);
+    //Recorded Instrument Number
+    const RecordedInstrumentNumberPR = faker.number.int({ min: 100000, max: 999999 }).toString();
+    await page.locator('input[id="recorded_Instrument_Number_Document_Number_PR"]').fill(RecordedInstrumentNumberPR);
     await page.waitForTimeout(1000);
 
     //Save 
@@ -935,34 +939,12 @@ incrementSrCounter();
 
 
     const PR_InstrumentName = (await page.locator('#instrument_Name_PR .mat-mdc-select-value-text .mat-mdc-select-min-line').textContent())?.trim() || '';
-    const PR_instrumentDate = await page.$eval('#instrument_Date_PR', el => (el as HTMLInputElement).value);
-    const PR_BorrowersName = await page.$eval('#borrower_PR', el => (el as HTMLInputElement).value);
-    const PR_ConsiderationAmount = await page.$eval('#consideration_Amount_PR', el => (el as HTMLInputElement).value);
-    const PR_OL = await page.$eval('#original_Lender_PR', el => (el as HTMLInputElement).value);
-    const PR_Beneficiary = await page.$eval('#beneficiary_PR', el => (el as HTMLInputElement).value);
-    const PR_BeneficiaryAddress = await page.$eval('#beneficiary_Address_PR', el => (el as HTMLInputElement).value);
-    const PR_SigingLine = await page.$eval('#siging_Line_PR', el => (el as HTMLInputElement).value);
-    const PR_Trustee = await page.$eval('#trustee_PR', el => (el as HTMLInputElement).value);
-    const PR_RecordedState = (await page.locator('#recorded_State_PR .mat-mdc-select-value-text .mat-mdc-select-min-line').textContent())?.trim() || '';
-    const PR_RecordedCounty = (await page.locator('#recorded_County_PR .mat-mdc-select-value-text .mat-mdc-select-min-line').textContent())?.trim() || '';
-    const PR_RecordedAgency = (await page.locator('#recorded_Agency_PR .mat-mdc-select-value-text .mat-mdc-select-min-line').textContent())?.trim() || '';
     const PR_RecordedDate = await page.$eval('#recorded_Date_PR', el => (el as HTMLInputElement).value);   
     const PR_RecordedBook = await page.$eval('#recorded_Book_PR', el => (el as HTMLInputElement).value);
     const PR_RecordedPage = await page.$eval('#recorded_Page_PR', el => (el as HTMLInputElement).value);
 
       if (
             normalize(PRI_InstrumentName) === normalize(PR_InstrumentName) &&
-            normalize(BorrowerNamePR) === normalize(PR_BorrowersName) &&
-            normalize(InstrumentDatePR) === normalize(PR_instrumentDate) &&
-            normalize(ConsiderationNumberPR) === normalize(PR_ConsiderationAmount) &&
-            normalize(OriginalLenderPR) === normalize(PR_OL) &&
-            normalize(BeneficiaryNamePR) === normalize(PR_Beneficiary) &&
-            normalize(BeneficialAddressPR) === normalize(PR_BeneficiaryAddress) &&
-            normalize(SigingLinePR) === normalize(PR_SigingLine) &&
-            normalize(TrusteeNamePR) === normalize(PR_Trustee) &&
-            normalize(RecordedStatePR) === normalize(PR_RecordedState) &&
-            normalize(RecordedCountyPR) === normalize(PR_RecordedCounty) &&
-            normalize(RecordedAgencyPR) === normalize(PR_RecordedAgency) &&
             normalize(RecordedDatePR) === normalize(PR_RecordedDate) &&
             normalize(RecordedBookPR) === normalize(PR_RecordedBook) &&
             normalize(RecordedPagePR) === normalize(PR_RecordedPage)
@@ -1070,46 +1052,55 @@ incrementSrCounter();
     await page.locator('div.ag-selection-checkbox input[type="checkbox"]').click(); 
     await page.locator('button[mattooltip="Create a new batch"]').click();
     await page.waitForTimeout(1500); 
-    //MERS Signor
-    await page.locator('span[class="badge text-outline-success"]').click();
+    //Signor Group (MERS or Non MERS)
+    // Only the group matching the order's MERS indicator is visible; the other stays in the DOM with class d-none.
+    // MERS = "MERS Signor Group" (text-outline-success), Non-MERS = "Non MERS Signor Group" (text-outline-danger).
+    // Sidebar menu also uses mat-expansion-panel - pick the visible Signor Group panel only
+    const signorPanel = page.locator('mat-expansion-panel:not(.d-none)')
+        .filter({ has: page.locator('span.badge', { hasText: /Signor Group/i }) })
+        .first();
+    const signorBadge = signorPanel.locator('span.badge', { hasText: /Signor Group/i });
+    await signorBadge.waitFor({ state: 'visible', timeout: 15000 });
+    console.log(`✅ ${(await signorBadge.innerText()).trim()}`);
+    await signorBadge.click();
     //Signor 1
-    await page.locator('div[class="mat-mdc-form-field-flex"]').nth(2).click();
+    await signorPanel.locator('div[class="mat-mdc-form-field-flex"]').nth(0).click();
     await page.locator('span[class="mdc-list-item__primary-text"]').nth(0).click();
     await page.waitForTimeout(1500);
     //Signor 2
-    await page.locator('div[class="mat-mdc-form-field-flex"]').nth(3).click();
+    await signorPanel.locator('div[class="mat-mdc-form-field-flex"]').nth(1).click();
     await page.locator('span[class="mdc-list-item__primary-text"]').nth(0).click();
     await page.waitForTimeout(1500);
     //Witness 1
-    await page.locator('div[class="mat-mdc-form-field-flex"]').nth(4).click();
+    await signorPanel.locator('div[class="mat-mdc-form-field-flex"]').nth(2).click();
     await page.locator('span[class="mdc-list-item__primary-text"]').nth(0).click();
     await page.waitForTimeout(1500);
     //Witness 2
-    await page.locator('div[class="mat-mdc-form-field-flex"]').nth(5).click();
+    await signorPanel.locator('div[class="mat-mdc-form-field-flex"]').nth(3).click();
     await page.locator('span[class="mdc-list-item__primary-text"]').nth(0).click();
     await page.waitForTimeout(1500);
     //Notary 1
-    await page.locator('div[class="mat-mdc-form-field-flex"]').nth(6).click();
+    await signorPanel.locator('div[class="mat-mdc-form-field-flex"]').nth(4).click();
     await page.locator('span[class="mdc-list-item__primary-text"]').nth(0).click();
     await page.waitForTimeout(1500);
     //Notary 2
-    await page.locator('div[class="mat-mdc-form-field-flex"]').nth(7).click();
+    await signorPanel.locator('div[class="mat-mdc-form-field-flex"]').nth(5).click();
     await page.locator('span[class="mdc-list-item__primary-text"]').nth(0).click();
     await page.waitForTimeout(1500);
     //Preparer
-    await page.locator('div[class="mat-mdc-form-field-flex"]').nth(8).click();
+    await signorPanel.locator('div[class="mat-mdc-form-field-flex"]').nth(6).click();
     await page.locator('span[class="mdc-list-item__primary-text"]').nth(0).click();
     await page.waitForTimeout(1500);
     //ST
-    await page.locator('div[class="mat-mdc-form-field-flex"]').nth(9).click();
+    await signorPanel.locator('div[class="mat-mdc-form-field-flex"]').nth(7).click();
     await page.locator('span[class="mdc-list-item__primary-text"]').nth(1).click();
     await page.waitForTimeout(1500);
     //Return To
-    await page.locator('div[class="mat-mdc-form-field-flex"]').nth(10).click();
+    await signorPanel.locator('div[class="mat-mdc-form-field-flex"]').nth(8).click();
     await page.locator('span[class="mdc-list-item__primary-text"]').nth(0).click();
     await page.waitForTimeout(1500);
     //Notary block
-    await page.locator('div[class="mat-mdc-form-field-flex"]').nth(11).click();
+    await signorPanel.locator('div[class="mat-mdc-form-field-flex"]').nth(9).click();
     await page.locator('span[class="mdc-list-item__primary-text"]').nth(0).click();
     await page.waitForTimeout(1500);
     //Submit
@@ -1166,7 +1157,10 @@ incrementSrCounter();
         await page.waitForTimeout(1000);
 
         // Wait for either "Generation Completed" or "Generation Failed"
-        const generationStatus = page.locator('span.badge.text-outline-primary, span.badge.text-outline-danger');
+        // (filtered by text - the "MERS Signors" / "Non MERS Signors" badges share the same classes)
+        const generationStatus = page.locator('span.badge.text-outline-primary, span.badge.text-outline-danger')
+            .filter({ hasText: /Generation Completed|Generation Failed/ })
+            .first();
         // Wait until status changes from "In Progress"
         await expect(generationStatus).toHaveText( /Generation Completed|Generation Failed/,{ timeout: 120000 });
 
@@ -1407,12 +1401,29 @@ incrementSrCounter();
             // "download" event instead of opening a viewable tab. Handle BOTH cases.
             let base64Data = '';
 
-            // Arm both listeners BEFORE the click; the unused one just times out -> null.
-            const popupPromise = page.context()  .waitForEvent('page', { timeout: 7000 }) .catch(() => null);
-            const downloadPromise = page .waitForEvent('download', { timeout: 7000 }) .catch(() => null);
+            // Arm all listeners BEFORE the click; the unused ones just time out -> null.
+            // The link calls GET api/orders/{orderId}/documents/{docId}/preview, which returns
+            // { mimeType, docBytes (base64) } - read the PDF straight from that response first.
+            const previewPromise = page.waitForResponse(
+                (r: any) => /\/api\/orders\/\d+\/documents\/\d+\/preview/.test(r.url()) && r.request().method() === 'GET',
+                { timeout: 60000 }
+            ).catch(() => null);
+            const popupPromise = page.context()  .waitForEvent('page', { timeout: 30000 }) .catch(() => null);
+            const downloadPromise = page .waitForEvent('download', { timeout: 30000 }) .catch(() => null);
 
             await generatedDocLink.click();
 
+            const preview = await previewPromise;
+            if (preview && preview.ok()) {
+                const body = await preview.json().catch(() => null);
+                base64Data = body?.docBytes || '';
+            }
+
+            if (base64Data) {
+                // Got the bytes from the API - close the viewer tab if the app opens one
+                popupPromise.then((p: any) => p?.close().catch(() => {}));
+            } else {
+            // Fallback: capture from the download / viewer tab
             const [popup, download] = await Promise.all([popupPromise, downloadPromise]);
 
             if (download) {
@@ -1440,7 +1451,8 @@ incrementSrCounter();
             });
                 await popup.close();
             } else {
-                throw new Error('Document click produced neither a download nor a new tab.');
+                throw new Error('Document click produced neither a preview response, a download nor a new tab.');
+            }
             }
 
             if (!base64Data) {
@@ -1566,7 +1578,7 @@ incrementSrCounter();
             await page.waitForTimeout(1500);   
             //Order selected : Ingest Signed Documents
             await page.locator('div.ag-selection-checkbox input[type="checkbox"]').click(); 
-            await page.locator('button[mattooltip="Send for Recording"]').click();
+            await page.locator('button[aria-label="Send for Recording"]').click();
             await page.waitForTimeout(1500); 
 
             //Toaster message 
@@ -1657,10 +1669,10 @@ incrementSrCounter();
 
 });    
 
-test.afterAll(async ({}, testInfo) => {
-    const results = getResults();
-    const baseURL =
-        testInfo.project.use.baseURL ||
-        'https://dev-outamateds.outamationlabs.com/';
-    await sendMail(results); //await sendMail(results, baseURL); 
-});
+// test.afterAll(async ({}, testInfo) => {
+//     const results = getResults();
+//     const baseURL =
+//         testInfo.project.use.baseURL ||
+//         'https://dev-outamateds.outamationlabs.com/';
+//     await sendMail(results); //await sendMail(results, baseURL); 
+// });

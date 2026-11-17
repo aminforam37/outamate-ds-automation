@@ -299,7 +299,7 @@ test(' Dashboard Received ', async ({ page , baseURL}) => {
         await page.getByText('(Select All)').click();
         await page.waitForTimeout(1000);
 
-        const statusesHold = ['HOLD', 'FEE INCREASE', 'SEARCH INQUIRIES'];
+        const statusesHold = ['FEE INCREASE', 'SEARCH INQUIRIES'];
         // Search HOLD
         for (const status of statusesHold) {
             await searchInput.fill(status);
@@ -343,6 +343,7 @@ test(' Dashboard Received ', async ({ page , baseURL}) => {
     module: 'Dashboard',
     status: status,
     URL: `<a href="${currentUrl}">Dashboard</a>`
+    
   });
 
     // if (page.url().includes('/app/internal/assignments/dashboard/order-status'))

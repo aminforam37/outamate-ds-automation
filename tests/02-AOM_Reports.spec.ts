@@ -12,7 +12,7 @@ let isPassed = true;
 
 //@Outamate DS:
 
-test(' Reports ', async ({ page, baseURL }) => {
+test('Reports ', async ({ page, baseURL }) => {
     const base = (baseURL ?? '').replace(/\/$/, '');
 
     await page.goto('/app/internal/assignments/dashboard/order-status');

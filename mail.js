@@ -116,7 +116,7 @@ export async function sendMail(testResults) {
     const mailOptions = {
         from: process.env.EMAIL_USER,
         to: 'foram.amin@outamation.com',
-   //  cc: 'tushar.galiya@outamation.com',
+    // cc: 'tushar.galiya@outamation.com',
         subject: dynamicSubject,
         // subject: hasFailures
         //     ? 'Failed: DS - Web UI Playwright Automation Flow Result'

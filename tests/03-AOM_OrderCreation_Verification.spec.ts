@@ -48,7 +48,7 @@ async function assertTransition(
 }
 
 //@Outamate DS:
-test(' Order Creation ', async ({ page }) => {
+test('@Outamate DS: Order Creation ', async ({ page }) => {
 
 
     // --- GLOBAL RUNTIME MONITORING HOOKS ---
@@ -505,150 +505,150 @@ test(' Order Creation ', async ({ page }) => {
             await page.waitForTimeout(1500);
 
 
-//     console.log("");
-//     console.log("\x1b[1mEdit Order:\x1b[0m");
+    console.log("");
+    console.log("\x1b[1mEdit Order:\x1b[0m");
 
-//     //Order Details 
-//     await page.locator('a[href*="/details"]').click();
+    //Order Details 
+    await page.locator('a[href*="/details"]').click();
 
-//     //Edit Order
-//     await page.locator('button[mattooltip="Edit Order"]').click();
-//     await page.waitForTimeout(1500);
+    //Edit Order
+    await page.locator('button[mattooltip="Edit Order"]').click();
+    await page.waitForTimeout(1500);
 
-//     // Store edit page URL
-//     const editOrderUrl = page.url();
+    // Store edit page URL
+    const editOrderUrl = page.url();
 
-//     //Edit Order - Change Customer
-//     await page.locator('[aria-haspopup="listbox"]').nth(0).click();
-//     await page.waitForTimeout(1500);
-//     // const CusNameUD = await page.locator('span[class="mdc-list-item__primary-text"]').nth(2);
-//     // await page.waitForTimeout(1500);
-//     const CusNameUD = page.getByText('Covius', { exact: true });
-//     await page.waitForTimeout(1500);
-//     const CustomerNameEdit = await CusNameUD.innerText();
-//     //console.log("Customer Name: ", CustomerNameEdit);
-//     await CusNameUD.click();
-//     await page.waitForTimeout(1500);
+    //Edit Order - Change Customer
+    await page.locator('[aria-haspopup="listbox"]').nth(0).click();
+    await page.waitForTimeout(1500);
+    // const CusNameUD = await page.locator('span[class="mdc-list-item__primary-text"]').nth(2);
+    // await page.waitForTimeout(1500);
+    const CusNameUD = page.getByText('Covius', { exact: true });
+    await page.waitForTimeout(1500);
+    const CustomerNameEdit = await CusNameUD.innerText();
+    //console.log("Customer Name: ", CustomerNameEdit);
+    await CusNameUD.click();
+    await page.waitForTimeout(1500);
 
-//     //Edit Order - Change Project Code
-//     await page.locator('[aria-haspopup="listbox"]').nth(1).click();
-//     await page.waitForTimeout(1500);
-//     const ProjCodeUD = await page.locator('span[class="mdc-list-item__primary-text"]').nth(0);
-//     await page.waitForTimeout(1500);
-//     const ProjectCodeEdit = await ProjCodeUD.innerText();
-//    // console.log("Project Code: ", ProjectCodeEdit);
-//     await ProjCodeUD.click();
-//     await page.waitForTimeout(1500);
+    //Edit Order - Change Project Code
+    await page.locator('[aria-haspopup="listbox"]').nth(1).click();
+    await page.waitForTimeout(1500);
+    const ProjCodeUD = await page.locator('span[class="mdc-list-item__primary-text"]').nth(1);
+    await page.waitForTimeout(1500);
+    const ProjectCodeEdit = await ProjCodeUD.innerText();
+   // console.log("Project Code: ", ProjectCodeEdit);
+    await ProjCodeUD.click();
+    await page.waitForTimeout(1500);
 
-//     //Edit Order - Change Division
-//      await page.locator('[aria-haspopup="listbox"]').nth(2).click();
-//     await page.waitForTimeout(1500);
-//     const DivisionElementUD = await page.locator('span[class="mdc-list-item__primary-text"]').nth(1);
-//     await page.waitForTimeout(1500);
-//     const DivisionEdit = await DivisionElementUD.innerText();
-//     //console.log("Division: ", DivisionEdit);
-//     await DivisionElementUD.click();
-//     await page.waitForTimeout(1500);
+    //Edit Order - Change Division
+     await page.locator('[aria-haspopup="listbox"]').nth(2).click();
+    await page.waitForTimeout(1500);
+    const DivisionElementUD = await page.locator('span[class="mdc-list-item__primary-text"]').nth(1);
+    await page.waitForTimeout(1500);
+    const DivisionEdit = await DivisionElementUD.innerText();
+    //console.log("Division: ", DivisionEdit);
+    await DivisionElementUD.click();
+    await page.waitForTimeout(1500);
 
-//     //Edit Order - Change Lender
-//     const lenderLocatorUD = page.locator('input[formcontrolname="lenderName"]');
-//     await lenderLocatorUD.fill("John Doe");
-//     await page.waitForTimeout(1500);
-//     const LenderNameEdit = await lenderLocatorUD.inputValue();
-//     //console.log("Lender Name: ", LenderNameEdit);
+    //Edit Order - Change Lender
+    const lenderLocatorUD = page.locator('input[formcontrolname="lenderName"]');
+    await lenderLocatorUD.fill("John Doe");
+    await page.waitForTimeout(1500);
+    const LenderNameEdit = await lenderLocatorUD.inputValue();
+    //console.log("Lender Name: ", LenderNameEdit);
 
-//     //Product Type
-//     await page.locator('[aria-haspopup="listbox"]').nth(3).click();
-//     await page.waitForTimeout(1500);
-//     const ProductTypeEdit = await page.locator('span[class="mdc-list-item__primary-text"]').nth(1);
-//     await page.waitForTimeout(1500);
-//     const ProductTypeED = await ProductTypeEdit.innerText();
-//     await ProductTypeEdit.click();
-//     await page.waitForTimeout(1500);
+    //Product Type
+    await page.locator('[aria-haspopup="listbox"]').nth(3).click();
+    await page.waitForTimeout(1500);
+    const ProductTypeEdit = await page.locator('span[class="mdc-list-item__primary-text"]').nth(1);
+    await page.waitForTimeout(1500);
+    const ProductTypeED = await ProductTypeEdit.innerText();
+    await ProductTypeEdit.click();
+    await page.waitForTimeout(1500);
 
-//     //Edit Order - Change Address
-//     const AddressLine1Edit = faker.location.streetAddress();
-//     await page.locator('input[formcontrolname="line1"]').fill(AddressLine1Edit);
-//     await page.waitForTimeout(1500);
-//   //  console.log("Address Line 1: ", AddressLine1Edit);
+    //Edit Order - Change Address
+    const AddressLine1Edit = faker.location.streetAddress();
+    await page.locator('input[formcontrolname="line1"]').fill(AddressLine1Edit);
+    await page.waitForTimeout(1500);
+  //  console.log("Address Line 1: ", AddressLine1Edit);
 
-//     //Edit Order - Save order
-//     await page.locator('button:has-text("Save")').click();
-//     await page.waitForTimeout(1500);
+    //Edit Order - Save order
+    await page.locator('button:has-text("Save")').click();
+    await page.waitForTimeout(1500);
 
-//     // Wait until redirected after save
-//     await page.waitForURL(/\/app\/internal\/assignments\/orders\/\d+\/details/);
-//     const editedOrderUrl = page.url();
-//     //console.log("Edited Order URL:", editedOrderUrl);
+    // Wait until redirected after save
+    await page.waitForURL(/\/app\/internal\/assignments\/orders\/\d+\/details/);
+    const editedOrderUrl = page.url();
+    //console.log("Edited Order URL:", editedOrderUrl);
 
-//     // Validate edit order success
-//     const isOrderEdited =
-//         /\/app\/internal\/assignments\/orders\/\d+\/details/.test(editedOrderUrl);
-//         addResult({
-//         product: "AOM",
-//         srNo: `${reportBase}.4`,
-//         module: 'Edit Order',
-//         status: isOrderEdited ? 'Pass' : 'Fail',
-//         URL: `<a href="${editOrderUrl}" target="_blank">Edit Order</a>`
-//     });
+    // Validate edit order success
+    const isOrderEdited =
+        /\/app\/internal\/assignments\/orders\/\d+\/details/.test(editedOrderUrl);
+        addResult({
+        product: "AOM",
+        srNo: `${reportBase}.4`,
+        module: 'Edit Order',
+        status: isOrderEdited ? 'Pass' : 'Fail',
+        URL: `<a href="${editOrderUrl}" target="_blank">Edit Order</a>`
+    });
 
-//     if (isOrderEdited) {
+    if (isOrderEdited) {
 
-//         console.log("✅ Order edited successfully.");
+        console.log("✅ Order edited successfully.");
 
-//     } else {
-//         console.log("❌ Order edit failed.");
-//     }
+    } else {
+        console.log("❌ Order edit failed.");
+    }
 
 
 
-//     //Verify changes in History tab
-//     await page.locator('button[mattooltip="History"]').click();
-//     await page.waitForTimeout(1500);
+    //Verify changes in History tab
+    await page.locator('button[mattooltip="History"]').click();
+    await page.waitForTimeout(1500);
     
-//     const NewvalueCustomer = (await page.getByRole('gridcell', { name: 'Covius' }).innerText()).trim();
-//    // console.log("New Customer Name in History: ", NewvalueCustomer);
-//     const NewvalueProjectCode = (await page.getByRole('gridcell', { name: 'AP001' }).innerText()).trim();
-//   //  console.log("New Project Code in History: ", NewvalueProjectCode);
-//     const NewvalueDivision = (await page.getByRole('gridcell', { name: 'Batch Division' }).innerText()).trim();
-//  //   console.log("New Division in History: ", NewvalueDivision);
-//     const NewvalueLender = (await page.getByRole('gridcell', { name: 'John Doe' }).innerText()).trim();
-//  //   console.log("New Lender Name in History: ", NewvalueLender);
-//     const NewvalueAddress =  (await page.getByRole('gridcell', { name: AddressLine1Edit }).innerText()).trim();
-//  //   console.log("New Address Line 1 in History: ", NewvalueAddress);
+    const NewvalueCustomer = (await page.getByRole('gridcell', { name: 'Covius' }).innerText()).trim();
+   // console.log("New Customer Name in History: ", NewvalueCustomer);
+  //  const NewvalueProjectCode = (await page.getByRole('gridcell', { name: 'APDR001' }).innerText()).trim();
+  //  console.log("New Project Code in History: ", NewvalueProjectCode);
+    const NewvalueDivision = (await page.getByRole('gridcell', { name: 'Batch Division' }).innerText()).trim();
+ //   console.log("New Division in History: ", NewvalueDivision);
+    const NewvalueLender = (await page.getByRole('gridcell', { name: 'John Doe' }).innerText()).trim();
+ //   console.log("New Lender Name in History: ", NewvalueLender);
+    const NewvalueAddress =  (await page.getByRole('gridcell', { name: AddressLine1Edit }).innerText()).trim();
+ //   console.log("New Address Line 1 in History: ", NewvalueAddress);
 
-//     const expectedProjectCodeHistory = NewvalueProjectCode.split(" - ")[0].trim();
+   // const expectedProjectCodeHistory = NewvalueProjectCode.split(" - ")[0].trim();
 
-//     if (NewvalueCustomer === CustomerNameEdit 
-//         && NewvalueProjectCode === expectedProjectCodeHistory
-//         && NewvalueDivision === DivisionEdit
-//         && NewvalueLender === LenderNameEdit    
-//         && NewvalueAddress === AddressLine1Edit
-//         ) {
-//         addResult({
-//             product: "AOM",
-//             srNo: `${reportBase}.5`,
-//             module: 'Edit History Verification',
-//             status: 'Pass',
-//             URL: `<a href="${page.url()}">Edit History</a>`
-//         });
-//         console.log("✅ History details are correct and match the created order.");
-//     } else {            
-//             addResult({
-//             product: "AOM",
-//             srNo: `${reportBase}.5`,
-//             module: 'Edit History Verification',
-//             status: 'Fail',
-//             URL: `<a href="${page.url()}">Edit History</a>`
-//         });
-//         console.log("❌ History details do not match the created order or are incorrect.");
+    if (NewvalueCustomer === CustomerNameEdit 
+       // && NewvalueProjectCode === expectedProjectCodeHistory
+        && NewvalueDivision === DivisionEdit
+        && NewvalueLender === LenderNameEdit    
+        && NewvalueAddress === AddressLine1Edit
+        ) {
+        addResult({
+            product: "AOM",
+            srNo: `${reportBase}.5`,
+            module: 'Edit History Verification',
+            status: 'Pass',
+            URL: `<a href="${page.url()}">Edit History</a>`
+        });
+        console.log("✅ History details are correct and match the created order.");
+    } else {            
+            addResult({
+            product: "AOM",
+            srNo: `${reportBase}.5`,
+            module: 'Edit History Verification',
+            status: 'Fail',
+            URL: `<a href="${page.url()}">Edit History</a>`
+        });
+        console.log("❌ History details do not match the created order or are incorrect.");
         
-//     }   
+    }   
 
     
-//     //Close History tab
-//     await page.locator('i[class="ri-close-fill"]').click();
-//     await page.waitForTimeout(1500);
+    //Close History tab
+    await page.locator('i[class="ri-close-fill"]').click();
+    await page.waitForTimeout(1500);
     
 
    

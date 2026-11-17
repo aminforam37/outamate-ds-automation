@@ -26,26 +26,60 @@ await page.goto(baseURL ??  '/');
     );
   }
 
+  const appHost = new URL(baseURL ?? page.url()).host;
+  // The sign-in redirect lands on bare "/app" before the app routes onward.
+  const onApp = (url: URL) => url.host === appHost && /^\/app(\/|$)/.test(url.pathname);
+
   await page.locator('input[name="username"]').fill(Email);
-  await page.waitForTimeout(1500); 
   await page.locator('button[type="submit"]').click();
-  await page.locator('input[name="passwd"]').fill(Password);
-  await page.locator('button[type="submit"]').click();
-  await page.waitForTimeout(1500); 
+
+  // Wait for the password page itself rather than a fixed pause.
+  const passwd = page.locator('input[name="passwd"]');
+  await passwd.waitFor({ state: 'visible', timeout: 60_000 });
+  await passwd.fill(Password);
   await page.locator('[type="submit"]').click();
-  await page.waitForTimeout(1500); 
+
+  // "Stay signed in?" may or may not be shown. Clicking a fixed submit after 1.5s raced
+  // the page load on a slow sign-in and left the app on a blank page, so wait for
+  // either that prompt or the app itself before acting.
+  const staySignedIn = page.locator('#idSIButton9, input[type="submit"][value="Yes"]');
+  await Promise.any([
+    staySignedIn.waitFor({ state: 'visible', timeout: 60_000 }),
+    page.waitForURL(onApp, { timeout: 60_000 }),
+  ]).catch(() => { });
+  if (!onApp(new URL(page.url())) && await staySignedIn.isVisible().catch(() => false)) {
+    await staySignedIn.click();
+  }
 
   // Real post-login signal: the dashboard module tiles only render once
   // authentication has actually succeeded. The previous check tested a non-empty
   // string literal (`if (successMessageSelector)`), so it was always true and
   // reported "logged in successfully" even on a failed login.
+  // The app may also skip the module tiles and reopen the last-used module directly
+  // (and the side menu can be collapsed in a headed window), so landing on any /app/
+  // page of the application host counts as success too.
   let loggedIn = true;
   try {
-    await page.locator('h6.module-title').first().waitFor({ state: 'visible', timeout: 30_000 });
+    await Promise.any([
+      page.locator('h6.module-title').first().waitFor({ state: 'visible', timeout: 60_000 }),
+      page.waitForURL(onApp, { timeout: 60_000 }),
+    ]);
+
+    // Reaching /app is not enough: it can sit blank while the app finishes signing in,
+    // and saving the session then gives later specs an unusable user.json. Wait for the
+    // app shell (module tiles or the side menu's Logout — attached, since the menu can
+    // be collapsed); if /app stays blank, open a dashboard directly.
+    const shell = page.locator('h6.module-title').or(page.getByText('Logout', { exact: true })).first();
+    const shellUp = () => shell.waitFor({ state: 'attached', timeout: 30_000 }).then(() => true).catch(() => false);
+    if (!await shellUp()) {
+      await page.goto('/app/internal/research/dashboard/order-status', { waitUntil: 'domcontentloaded' });
+      if (!await shellUp()) throw new Error('app shell never loaded');
+    }
     console.log("✅ User logged in Successfully and redirected to Dashboard.");
   } catch {
     loggedIn = false;
     console.log("❌ User login failed or user not redirected to Dashboard.");
+    console.log(`   stuck on: ${page.url()}`);
   }
 
     status = loggedIn ? 'Pass' : 'Fail';

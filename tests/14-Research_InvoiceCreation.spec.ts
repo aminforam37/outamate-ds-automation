@@ -7,7 +7,8 @@ import { setCustomerOrder } from '../Variable';
 import path from 'path';
 import fs from 'fs';
 
-test('@Outamate DS: Invoice Creation ', async ({ page }) => {
+//@Outamate DS:
+test(' Invoice Creation ', async ({ page }) => {
 
     attachRuntimeMonitors(page);
 
@@ -1042,6 +1043,6 @@ test('@Outamate DS: Invoice Creation ', async ({ page }) => {
     expect.soft(invoiceSaved, `invoice saved (toast: "${toastText}")`).toBe(true);
     expect.soft(invoiceFound, `invoice ${InvoiceNumber} found in Verification queue`).toBe(true);
 
-    const results = getResults();
-    await sendMail(results);
+    // const results = getResults();
+    // await sendMail(results);
 });

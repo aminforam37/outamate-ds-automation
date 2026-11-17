@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker/locale/en';
 import { addResult, getResults, getSrCounter, incrementSrCounter  } from '../resultsCollector'; 
 import { sendMail } from '../mail';
 import { attachRuntimeMonitors } from './support/runtimeMonitors';
-import { setCustomerOrder } from '../Variable';
+import { setCustomerOrder, setResearchOrder } from '../Variable';
 const fs = require('fs');
 const path = require('path');
 
@@ -473,6 +473,19 @@ test(' Order Creation ', async ({ page }) => {
         await page.waitForTimeout(1500);
         await page.getByRole('option', { name: AbstractorName  }).click();
         await page.waitForTimeout(1500);
+
+        // Share the numeric order id and the abstractor with the invoice spec (14).
+        // The invoice form's Order IDs autocomplete only lists orders belonging to
+        // the selected abstractor, so both values are needed to invoice this order.
+        // The id comes from the /orders/<id>/request-quotes URL — it is the 8-digit
+        // internal id, not the 6-digit CustomerOrder shown in the grids.
+        const orderIdMatch = page.url().match(/\/orders\/(\d+)/);
+        if (orderIdMatch) {
+            setResearchOrder(orderIdMatch[1], AbstractorName);
+            console.log(`Research Order Id: ${orderIdMatch[1]} (abstractor: ${AbstractorName})`);
+        } else {
+            console.log(`⚠️  Could not read the order id from the URL: ${page.url()}`);
+        }
 
         //Uncheck the Notify Via Email 
         await page.uncheck('[formcontrolname="isEmailNotification"] input');
